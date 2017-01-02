@@ -2,24 +2,24 @@
 #include <vector>
 #include <memory>
 #include <utility>
-#include <chrono>
+#include <Windows.h>
 
 class Keystroke
 {
 public:
 	Keystroke();
 	~Keystroke();
-	inline const std::vector<std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>> getKeystockes() { return keystrokes; }
-	inline const auto getLastKeyDuration() { return (keystrokes.back().second - keystrokes.back().first).count(); }
-	inline const auto getCurrentKeyDuration() { return (currentKeyUp - currentKeyDown).count(); }
-	inline void setDown(std::chrono::high_resolution_clock::time_point t) { currentKeyDown = t; }
-	inline void setUp(std::chrono::high_resolution_clock::time_point t) { currentKeyUp = t; }
+	inline const std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> getKeystockes() { return keystrokes; }
+	inline const long long getLastKeyDuration() { return (keystrokes.back().second.QuadPart - keystrokes.back().first.QuadPart); }
+	inline const long long getCurrentKeyDuration() { return (currentKeyUp.QuadPart - currentKeyDown.QuadPart); }
+	inline BOOL setDown() { return QueryPerformanceCounter(&currentKeyDown); }
+	inline BOOL setUp() { return QueryPerformanceCounter(&currentKeyUp); }
 private:
-	std::chrono::high_resolution_clock::time_point currentKeyDown;
-	std::chrono::high_resolution_clock::time_point currentKeyUp;
-	std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point> currentKey;
-	std::vector<std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point>> keystrokes;
-	inline std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point> makePair() { currentKey = std::make_pair(currentKeyDown, currentKeyUp); return currentKey; }
-	inline void add_keystroke(std::pair<std::chrono::high_resolution_clock::time_point, std::chrono::high_resolution_clock::time_point> keys) { keystrokes.push_back(keys); }
+	LARGE_INTEGER currentKeyDown;
+	LARGE_INTEGER currentKeyUp;
+	std::pair<LARGE_INTEGER, LARGE_INTEGER> currentKey;
+	std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> keystrokes;
+	inline std::pair<LARGE_INTEGER, LARGE_INTEGER> makePair() { currentKey = std::make_pair(currentKeyDown, currentKeyUp); return currentKey; }
+	inline void add_keystroke(std::pair<LARGE_INTEGER, LARGE_INTEGER> keys) { keystrokes.push_back(keys); }
 };
 

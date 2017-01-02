@@ -28,11 +28,11 @@ Keystroke keystrokes;
 __declspec(dllexport) LRESULT CALLBACK handlerKeys(int code, WPARAM wp, LPARAM lp)
 {
 	if (code == HC_ACTION &&  wp == WM_KEYDOWN) {
-		keystrokes.setDown(std::chrono::high_resolution_clock::now());
+		keystrokes.setDown();
 	}
 	else if (code == HC_ACTION &&  wp == WM_KEYUP)
 	{
-		keystrokes.setUp(std::chrono::high_resolution_clock::now());
+		keystrokes.setUp();
 #ifdef _DEBUG
 		processKey(lp);
 #endif
