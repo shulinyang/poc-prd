@@ -4,30 +4,37 @@
 #include <utility>
 #include <Windows.h>
 
-class Keystroke
+typedef struct key key;
+
+class Keystrokes
 {
 public:
-	Keystroke();
-	~Keystroke();
+	Keystrokes();
+	~Keystrokes();
 
-	inline const std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> getKeystockes() { return keystrokes; }
-	inline const long long getLastKeyDuration() { return (keystrokes.back().second.QuadPart - keystrokes.back().first.QuadPart); }
-	inline const long long getCurrentKeyDuration() { return (currentKeyUp.QuadPart - currentKeyDown.QuadPart); }
-	// counter
-	inline BOOL setDown() { return (oneDown) ? QueryPerformanceCounter(&currentKeyDown) : FALSE; }
-	inline BOOL setUp() { oneDown = true; return QueryPerformanceCounter(&currentKeyUp); }
-	// timestamp message
 	void setTSDown(LPARAM& lp);
 	void setTSUp(LPARAM& lp);
-	inline long getDiffTS() { return currentTimestampUp - currentTimestampDown; }
+	inline long long getCurrentTimePressed() { return currentKey.keyUp - currentKey.keyDown; }
+	inline long long getLastTimePressed() { return keystrokes.back().keyUp - keystrokes.back().keyDown; }
 
 private:
-	bool oneDown = true;
-	long currentTimestampDown, currentTimestampUp;
-	LARGE_INTEGER currentKeyDown, currentKeyUp;
-	std::pair<LARGE_INTEGER, LARGE_INTEGER> currentKey;
-	std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> keystrokes;
-	inline std::pair<LARGE_INTEGER, LARGE_INTEGER> makePair() { currentKey = std::make_pair(currentKeyDown, currentKeyUp); return currentKey; }
-	inline void add_keystroke(std::pair<LARGE_INTEGER, LARGE_INTEGER> keys) { keystrokes.push_back(keys); }
+	struct key
+	{
+		bool oneDown;
+		long long keyUp, keyDown;
+		long vkCode;
+		key::key(DWORD keyDown, DWORD vkcode)
+			:keyDown(keyDown), oneDown(false), vkCode(vkcode)
+		{
+		}
+		key::key()
+			:oneDown(true), vkCode(-1)
+		{}
+	};
+
+	key currentKey;
+	std::vector<key> waitingKey;
+	std::vector<key> keystrokes;
+	inline void addCurrentKey() { keystrokes.push_back(currentKey); }
 };
 

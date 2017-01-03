@@ -22,23 +22,21 @@
 HINSTANCE modulehandle;
 HHOOK kbdhook;
 bool running = true;
-Keystroke keystrokes;
+Keystrokes keystrokes;
 
 
 __declspec(dllexport) LRESULT CALLBACK handlerKeys(int code, WPARAM wp, LPARAM lp)
 {
 	if (code == HC_ACTION &&  wp == WM_KEYDOWN) {
-		keystrokes.setDown();
 		keystrokes.setTSDown(lp);
 	}
 	else if (code == HC_ACTION &&  wp == WM_KEYUP)
 	{
-		keystrokes.setUp();
 		keystrokes.setTSUp(lp);
 #ifdef _DEBUG
 		processKey(lp);
 #endif
-		std::cout << " [" << keystrokes.getCurrentKeyDuration() << "] ["<< keystrokes.getDiffTS()<<"] \n";
+		std::cout << " ["<< keystrokes.getLastTimePressed()<<"] \n";
 	}
 	
 	return CallNextHookEx(kbdhook, code, wp, lp);
