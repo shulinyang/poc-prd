@@ -12,11 +12,17 @@ public:
 	inline const std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> getKeystockes() { return keystrokes; }
 	inline const long long getLastKeyDuration() { return (keystrokes.back().second.QuadPart - keystrokes.back().first.QuadPart); }
 	inline const long long getCurrentKeyDuration() { return (currentKeyUp.QuadPart - currentKeyDown.QuadPart); }
-	inline BOOL setDown() { return QueryPerformanceCounter(&currentKeyDown); }
-	inline BOOL setUp() { return QueryPerformanceCounter(&currentKeyUp); }
+	// counter
+	inline BOOL setDown() { return (oneDown) ? QueryPerformanceCounter(&currentKeyDown) : FALSE; }
+	inline BOOL setUp() { oneDown = true; return QueryPerformanceCounter(&currentKeyUp); }
+	// timestamp message
+	void setTSDown(LPARAM& lp);
+	void setTSUp(LPARAM& lp);
+	inline long getDiffTS() { return currentTimestampUp - currentTimestampDown; }
 private:
-	LARGE_INTEGER currentKeyDown;
-	LARGE_INTEGER currentKeyUp;
+	bool oneDown = true;
+	long currentTimestampDown, currentTimestampUp;
+	LARGE_INTEGER currentKeyDown, currentKeyUp;
 	std::pair<LARGE_INTEGER, LARGE_INTEGER> currentKey;
 	std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> keystrokes;
 	inline std::pair<LARGE_INTEGER, LARGE_INTEGER> makePair() { currentKey = std::make_pair(currentKeyDown, currentKeyUp); return currentKey; }

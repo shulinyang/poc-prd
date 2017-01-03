@@ -29,14 +29,16 @@ __declspec(dllexport) LRESULT CALLBACK handlerKeys(int code, WPARAM wp, LPARAM l
 {
 	if (code == HC_ACTION &&  wp == WM_KEYDOWN) {
 		keystrokes.setDown();
+		keystrokes.setTSDown(lp);
 	}
 	else if (code == HC_ACTION &&  wp == WM_KEYUP)
 	{
 		keystrokes.setUp();
+		keystrokes.setTSUp(lp);
 #ifdef _DEBUG
 		processKey(lp);
 #endif
-		std::cout << " [" << keystrokes.getCurrentKeyDuration() << "] \n";
+		std::cout << " [" << keystrokes.getCurrentKeyDuration() << "] ["<< keystrokes.getDiffTS()<<"] \n";
 	}
 	
 	return CallNextHookEx(kbdhook, code, wp, lp);
