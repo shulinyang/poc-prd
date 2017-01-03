@@ -9,6 +9,7 @@ class Keystroke
 public:
 	Keystroke();
 	~Keystroke();
+
 	inline const std::vector<std::pair<LARGE_INTEGER, LARGE_INTEGER>> getKeystockes() { return keystrokes; }
 	inline const long long getLastKeyDuration() { return (keystrokes.back().second.QuadPart - keystrokes.back().first.QuadPart); }
 	inline const long long getCurrentKeyDuration() { return (currentKeyUp.QuadPart - currentKeyDown.QuadPart); }
@@ -19,6 +20,7 @@ public:
 	void setTSDown(LPARAM& lp);
 	void setTSUp(LPARAM& lp);
 	inline long getDiffTS() { return currentTimestampUp - currentTimestampDown; }
+
 private:
 	bool oneDown = true;
 	long currentTimestampDown, currentTimestampUp;
