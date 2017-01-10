@@ -67,15 +67,7 @@ int main()
 	
     if (hModule != nullptr)
     {
-        // Initialise MFC et affiche un message d'erreur en cas d'échec
-        if (false)//!AfxWinInit(hModule, nullptr, ::GetCommandLine(), 0))
-        {
-            // TODO: modifiez le code d'erreur selon les besoins
-            wprintf(L"Erreur irrécupérable : l'initialisation MFC a échoué\n");
-            nRetCode = 1;
-        }
-        else
-        {
+
 			std::cout << "Ok, let's work !" << std::endl;
 			MSG msg;
 			running = true;
@@ -91,7 +83,6 @@ int main()
 			}
 			system("Pause");
 			return nRetCode;
-		}
     }
     else
     {

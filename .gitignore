@@ -109,3 +109,5 @@ ipch/
 *.exe
 *.out
 *.app
+/poc_clavier_mfc/keys.data
+/poc_clavier_mfc/keys.data

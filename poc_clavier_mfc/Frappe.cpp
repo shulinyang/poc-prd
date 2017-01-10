@@ -1,12 +1,15 @@
 #include "Frappe.h"
 #include <algorithm>
+#include <iostream>
 
 Keystrokes::Keystrokes()
+	:file("keys.data", std::ios::ate)
 {
 }
 
 Keystrokes::~Keystrokes()
 {
+	file.close();
 }
 
 void Keystrokes::setTSDown(LPARAM& lp)
@@ -37,9 +40,7 @@ void Keystrokes::setTSUp(LPARAM& lp)
 		addCurrentKey();
 	}
 	else
-	{
 		for (size_t i = 0; i < waitingKey.size(); i++)
-		{
 			if (waitingKey[i].vkCode == st_hook.vkCode)
 			{
 				waitingKey[i].keyUp = st_hook.time;
@@ -47,6 +48,14 @@ void Keystrokes::setTSUp(LPARAM& lp)
 				waitingKey.erase(waitingKey.begin() + i);
 				break;
 			}
-		}
+}
+
+void Keystrokes::writeData()
+{
+	if (file.is_open())
+	{
+		file << keystrokes.back().vkCode << ";" << keystrokes.back().keyDown << ";" << keystrokes.back().keyUp << std::endl;
 	}
+	else
+		std::cerr << "File Failed to open" << std::endl;
 }
