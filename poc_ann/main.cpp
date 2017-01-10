@@ -59,8 +59,9 @@ void xor_test()
 	net.print_parameters();
 
 	std::cout << std::endl << "Training network." << std::endl;
-
+	
 	FANN::training_data data;
+	
 	if (data.read_train_from_file("xor.data"))
 	{
 		// Initialize and train the network with the data
