@@ -29,7 +29,7 @@ def process_interkey(data:list)->list:
 
 def writing(filename: str, data: list):
     with open(filename, 'w', encoding='utf-8', newline='') as file:
-        csv_writer = csv.writer(file, delimiter=';')
+        csv_writer = csv.writer(file, delimiter=' ')
         for i in range(len(data)):
             csv_writer.writerow(data[i])
 
