@@ -104,40 +104,45 @@ DataProcess::DataProcess()
 
 int DataProcess::ReadLine(string line)
 {
-  double v;
-  char *buf=(char *)line.c_str();
-  line_data.clear();
+	double v;
+	char *buf=(char *)line.c_str();
+	line_data.clear();
 
-  for(;isspace(*buf);buf++);
-  for(;*buf;){
-    sscanf(buf,"%lf",&v);
-    line_data.push_back(v);
-    for(;!isspace(*buf)&&*buf;buf++);
-    for(;isspace(*buf)&&*buf;buf++);
-  }
+	for(;isspace(*buf);buf++);
+	for(;*buf;)
+	{
+		sscanf(buf,"%lf",&v);
+		line_data.push_back(v);
+		for(;!isspace(*buf)&&*buf;buf++);
+		for(;isspace(*buf)&&*buf;buf++);
+	}
 
-  if(nItem != line_data.size() )
-    return -1;
-  for(unsigned int i=0;i<nItem;i++)
-    items[i]->Add(line_data[i]);
+	if(nItem != line_data.size())
+		return -1;
+	for(unsigned int i=0;i<nItem;i++)
+		items[i]->Add(line_data[i]);
+	return 0;
 }
 
 // çalýþýyor
 bool DataProcess::LoadRawData(char * filename)
 {
-  string line;
-  nItem=GetnItem(filename);
-  ifstream inputStream(filename);
-  if( !inputStream ) {
-    cerr << "Error opening input stream" << endl;
-    return false;
-  }
-  for(unsigned int i=0;i<nItem;i++)
-    items.push_back(new DataItem());
+	string line;
+	nItem=GetnItem(filename);
+	ifstream inputStream(filename);
+	if( !inputStream )
+	{
+		cerr << "Error opening input stream" << endl;
+		return false;
+	}
+	for(unsigned int i=0;i<nItem;i++)
+		items.push_back(new DataItem());
 
   int i=1;
-  while (getline(inputStream,line)){
-    if( ReadLine(line)==-1){
+  while (getline(inputStream,line))
+  {
+    if( ReadLine(line)==-1)
+	{
        cout << "Error Line : " << i;
        break;
 //       return false;
@@ -261,8 +266,8 @@ bool DataProcess::WriteData(char *FileName,int nOut, float pTrain)
 
 void DataProcess::Shuffle()
 {
-	unsigned long i= 0, swap;
-	for(unsigned long i= 0; i < nData /2 ; i++){
+	unsigned long swap;
+	for(unsigned long i = 0; i < nData /2 ; i++){
       swap = (unsigned long) (rand() % (unsigned long)nData);
       if(i!=swap){
         for(unsigned int j=0; j<nItem; j++)
@@ -442,7 +447,7 @@ bool TimeSeri::WriteData(char *file, float pTrain)
     out.close();
 
     if(nTestData){
-      string fname=file;
+      fname=file;
       fname+="-test.dat";
       out.open(fname.c_str(), std::ios::out);
       if( !out.is_open() ) return false;
