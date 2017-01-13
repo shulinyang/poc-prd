@@ -20,7 +20,7 @@ FannManager::~FannManager()
 {
 	net.destroy();
 }
-/*
+
 void FannManager::optimumAlgorithm()
 {
 	if (num_layers == 5)
@@ -103,6 +103,12 @@ int FannManager::examineTrain(FANN::training_algorithm_enum tal, FANN::activatio
 		return trainMSE;
 }
 
+
+void FannManager::set_weigths()
+{
+	net.init_weights(trainData);
+}
+
 int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
 {
 	double trainMSE = net.get_MSE();
@@ -162,9 +168,3 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	}
 	return 1;
 }
-
-void FannManager::set_weigths()
-{
-	net.init_weights(trainData);
-}
-*/
