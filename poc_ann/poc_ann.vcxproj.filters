@@ -13,10 +13,16 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{5736836a-22cd-47ba-a296-3e266ffa33f6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\floatfann.c">
+      <Filter>Lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

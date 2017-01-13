@@ -1,8 +1,12 @@
+#ifdef _DEBUG
+#define DEBUG		// compatibility
+#endif
 
 #include "floatfann.h"
 #include "fann_cpp.h"
 #include <iostream>
 #include <iomanip>
+
 
 int print_callback(FANN::neural_net &net, FANN::training_data &train,
 	unsigned int max_epochs, unsigned int epochs_between_reports,
@@ -19,7 +23,7 @@ void xor_test()
 
 	const float learning_rate = 0.7f;
 	const unsigned int num_layers = 3;
-	const unsigned int num_input = 2;
+	const unsigned int num_input = 1;
 	const unsigned int num_hidden = 3;
 	const unsigned int num_output = 1;
 	const float desired_error = 0.001f;
@@ -62,7 +66,7 @@ void xor_test()
 	
 	FANN::training_data data;
 	
-	if (data.read_train_from_file("xor.data"))
+	if (data.read_train_from_file("keys_ready.data-train.dat"))
 	{
 		// Initialize and train the network with the data
 		net.init_weights(data);
