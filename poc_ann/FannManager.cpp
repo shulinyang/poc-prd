@@ -4,16 +4,24 @@
 FannManager::FannManager()
 	:desired_error(0.001), learning_rate(0.7), num_layers(3), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
+	bestTrain = FANN::TRAIN_RPROP;
+	bestActivationHidden = bestActivationOutput = FANN::SIGMOID_SYMMETRIC_STEPWISE;
+	net.set_activation_function_hidden(bestActivationHidden);
+	net.set_activation_function_output(bestActivationOutput);
+	net.set_learning_rate(learning_rate);
+
 	num_hidden.resize(num_layers - num_input - num_output);
 	for (size_t i = 0; i < num_hidden.size(); i++)
 		num_hidden[i] = 3;
 }
 
+
 FannManager::~FannManager()
 {
+	net.destroy();
 }
-
-void FannManager::OptimumAlgorithm()
+/*
+void FannManager::optimumAlgorithm()
 {
 	if (num_layers == 5)
 		net.create_sparse(connection_rate, 5, num_input, num_hidden[0], num_hidden[1], num_hidden[2], num_output);
@@ -23,18 +31,19 @@ void FannManager::OptimumAlgorithm()
 		net.create_sparse(connection_rate, 3, num_input, num_hidden[0], num_output);
 
 	int min = 1, mse;
-	for (int ta = FANN_TRAIN_INCREMENTAL; ta <= FANN_TRAIN_SARPROP; ta++)
+	for (int ta = FANN::TRAIN_INCREMENTAL; ta <= FANN::TRAIN_SARPROP; ta++)
 	{
-		mse = ExamineTrain(static_cast<FANN::training_algorithm_enum>(ta), bestActivationHidden, bestActivationOutput);
+		mse = examineTrain(static_cast<FANN::training_algorithm_enum>(ta), bestActivationHidden, bestActivationOutput);
 		if (mse<min) {
 			min = mse;
 			bestTrain = static_cast<FANN::training_algorithm_enum>(ta);
 		}
 	}
+	net.set_training_algorithm(bestTrain);
 	net.destroy();
 }
 
-void FannManager::OptimumActivations() {
+void FannManager::optimumActivations() {
 	if (haveTestData)
 		return;
 
@@ -45,35 +54,46 @@ void FannManager::OptimumActivations() {
 	else
 		net.create_sparse(connection_rate, 3, num_input, num_hidden[0], num_output);
 
-	fann_type min = 1, mse;
-	for (int i = 0; i<13; i++) {
-		for (int j = 0; j<13; j++) {
-			mse = ExamineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j); 
-			if (mse<min) {
+	int min = 1, mse;
+	for (int i = 0; i<13; i++)
+	{
+		for (int j = 0; j<13; j++)
+		{
+			set_weigths();
+			mse = examineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j); 
+			if (mse<min)
+			{
 				min = mse;
 				bestActivationHidden = static_cast<FANN::activation_function_enum>(i);
 				bestActivationOutput = static_cast<FANN::activation_function_enum>(j);
 			}
 		}
 	}
-
+	net.set_activation_function_hidden(bestActivationHidden);
+	net.set_activation_function_output(bestActivationOutput);
 	net.destroy();
+}
+
+void FannManager::run()
+{
+
 }
 
 
 
-int FannManager::ExamineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact) 
+int FannManager::examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact) 
 {
 	net.set_training_algorithm(tal);
 	net.set_activation_function_hidden(hact);
 	net.set_activation_function_output(oact);
-	net.set_callback(LogOut, this);
+	net.set_callback(logOut, this);
 	net.train_on_data(trainData, 2000, 250, 0.0);
 
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
 	if (haveTestData && overtraining)
 	{
+		set_weigths();
 		net.reset_MSE();
 		net.test_data(testData);
 		testMSE = net.get_MSE();
@@ -83,7 +103,7 @@ int FannManager::ExamineTrain(FANN::training_algorithm_enum tal, FANN::activatio
 		return trainMSE;
 }
 
-int LogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
+int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
 {
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
@@ -142,3 +162,9 @@ int LogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	}
 	return 1;
 }
+
+void FannManager::set_weigths()
+{
+	net.init_weights(trainData);
+}
+*/
