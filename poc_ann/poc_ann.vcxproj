@@ -161,7 +161,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\floatfann.c" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="FannManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FannManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
