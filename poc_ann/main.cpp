@@ -4,18 +4,11 @@
 
 #include "floatfann.h"
 #include "fann_cpp.h"
+#include "FannManager.h"
 #include <iostream>
 #include <iomanip>
 
 
-int print_callback(FANN::neural_net &net, FANN::training_data &train,
-	unsigned int max_epochs, unsigned int epochs_between_reports,
-	float desired_error, unsigned int epochs, void *user_data)
-{
-	std::cout << "Epochs     " << std::setw(8) << epochs << ". "
-		<< "Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
-	return 0;
-}
 
 void xor_test()
 {
@@ -107,7 +100,13 @@ int main(int argc, char **argv)
 	try
 	{
 		std::ios::sync_with_stdio(); // Syncronize cout and printf output
-		xor_test();
+		//xor_test();
+		FannManager fm;
+		fm.load_data("keys_ready.data");
+		//fm.optimumAlgorithm();
+		//fm.optimumActivations();
+		fm.run();
+		fm.save("keys");
 	}
 	catch (...)
 	{

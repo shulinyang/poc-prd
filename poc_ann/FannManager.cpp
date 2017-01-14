@@ -1,18 +1,25 @@
 #include "FannManager.h"
-
+#include <iostream>
+#include <iomanip>
 
 FannManager::FannManager()
 	:desired_error(0.001), learning_rate(0.7), num_layers(3), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
+	connection_rate = 1;
+	overtraining = false;
 	bestTrain = FANN::TRAIN_RPROP;
 	bestActivationHidden = bestActivationOutput = FANN::SIGMOID_SYMMETRIC_STEPWISE;
 	net.set_activation_function_hidden(bestActivationHidden);
 	net.set_activation_function_output(bestActivationOutput);
 	net.set_learning_rate(learning_rate);
+	net.set_activation_steepness_hidden(1.0);
+	net.set_activation_steepness_output(1.0);
 
-	num_hidden.resize(num_layers - num_input - num_output);
-	for (size_t i = 0; i < num_hidden.size(); i++)
-		num_hidden[i] = 3;
+	layers = std::make_unique<unsigned int[]>(num_layers);
+	layers[0] = num_input;
+	for (size_t i = 1; i < (num_layers - 2); i++)
+		layers[i] = 3;
+	layers[num_layers - 1] = num_output;
 }
 
 
@@ -23,12 +30,7 @@ FannManager::~FannManager()
 
 void FannManager::optimumAlgorithm()
 {
-	if (num_layers == 5)
-		net.create_sparse(connection_rate, 5, num_input, num_hidden[0], num_hidden[1], num_hidden[2], num_output);
-	if (num_layers == 4)
-		net.create_sparse(connection_rate, 4, num_input, num_hidden[0], num_hidden[1], num_output);
-	else
-		net.create_sparse(connection_rate, 3, num_input, num_hidden[0], num_output);
+	net.create_sparse_array(connection_rate, num_layers, layers.get());
 
 	int min = 1, mse;
 	for (int ta = FANN::TRAIN_INCREMENTAL; ta <= FANN::TRAIN_SARPROP; ta++)
@@ -47,12 +49,7 @@ void FannManager::optimumActivations() {
 	if (haveTestData)
 		return;
 
-	if (num_layers == 5)
-		net.create_sparse(connection_rate, 5, num_input, num_hidden[0], num_hidden[1], num_hidden[2], num_output);
-	if (num_layers == 4)
-		net.create_sparse(connection_rate, 4, num_input, num_hidden[0], num_hidden[1], num_output);
-	else
-		net.create_sparse(connection_rate, 3, num_input, num_hidden[0], num_output);
+	net.create_sparse_array(connection_rate, num_layers, layers.get());
 
 	int min = 1, mse;
 	for (int i = 0; i<13; i++)
@@ -76,9 +73,39 @@ void FannManager::optimumActivations() {
 
 void FannManager::run()
 {
+	net.create_shortcut_array(num_layers, layers.get());
+	set_weigths();
 
+	std::cout << "Max Epochs " << std::setw(8) << max_iterations << ". "
+		<< "Desired Error: " << std::left << desired_error << std::right << std::endl;
+	net.set_callback(print_callback, this);
+	net.train_on_data(trainData, max_iterations, iterations_between_reports, desired_error);
+
+
+	net.train_on_data(trainData, max_iterations,
+		iterations_between_reports, desired_error);
+
+	std::cout << std::endl << "Testing network." << std::endl;
+
+
+	for (unsigned int i = 0; i < trainData.length_train_data(); ++i)
+	{
+		// Run the network on the test data
+		fann_type *calc_out = net.run(trainData.get_input()[i]);
+
+		std::cout << "XOR test (" << std::showpos << trainData.get_input()[i][0] << ", "
+			<< trainData.get_input()[i][1] << ") -> " << *calc_out
+			<< ", should be " << trainData.get_output()[i][0] << ", "
+			<< "difference = " << std::noshowpos
+			<< std::abs(*calc_out - trainData.get_output()[i][0]) << std::endl;
+	}
 }
 
+void FannManager::load_data(std::string str)
+{
+	trainData.read_train_from_file(str+"-train.dat");
+	testData.read_train_from_file(str+"-test.dat");
+}
 
 
 int FannManager::examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact) 
@@ -103,6 +130,17 @@ int FannManager::examineTrain(FANN::training_algorithm_enum tal, FANN::activatio
 		return trainMSE;
 }
 
+void FannManager::save(std::string str)
+{
+	std::cout << std::endl << "Saving network." << std::endl;
+
+	// Save the network in floating point and fixed point
+	net.save(str+".net");
+	unsigned int decimal_point = net.save_to_fixed(str+"_fixed.net");
+	trainData.save_train_to_fixed(str+"_fixed.data", decimal_point);
+
+}
+
 
 void FannManager::set_weigths()
 {
@@ -115,7 +153,7 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	double testMSE = -1;
 	unsigned int newBitFail = net.get_bit_fail();
 	FannManager* fM = reinterpret_cast<FannManager*>(user_data);
-	if (fM->hasTestData() && fM->overtraining)
+	if (fM->haveTestData && fM->overtraining)
 	{
 		net.reset_MSE();
 		net.test_data(fM->testData);
@@ -130,7 +168,7 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 		{
 			fM->MinTrainingMSE[i] = trainMSE;
 			fM->MinANN[i] = FANN::neural_net(net);
-			if (fM->hasTestData() && fM->overtraining)
+			if (fM->haveTestData && fM->overtraining)
 				fM->MinTestingMSE[i] = testMSE;
 		}
 		fM->MinANN[3] = FANN::neural_net(net);
@@ -145,11 +183,11 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 		//if (fM->MinANN[0] != NULL) fM->MinANN[0]);
 		fM->MinANN[0] = FANN::neural_net(net);
 		fM->MinTrainingMSE[0] = trainMSE;
-		if (fM->hasTestData() && fM->overtraining)
+		if (fM->haveTestData && fM->overtraining)
 			fM->MinTestingMSE[0] = testMSE;
 
 	}
-	if (fM->hasTestData() && fM->overtraining) {
+	if (fM->haveTestData && fM->overtraining) {
 		// Minimum Testing MSE
 		if (fM->MinTestingMSE[1]> testMSE) {
 			//if (fM->MinANN[1]) fann_destroy(MinANN[1]);
@@ -167,4 +205,13 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 		}
 	}
 	return 1;
+}
+
+int print_callback(FANN::neural_net &net, FANN::training_data &train,
+	unsigned int max_epochs, unsigned int epochs_between_reports,
+	float desired_error, unsigned int epochs, void *user_data)
+{
+	std::cout << "Epochs     " << std::setw(8) << epochs << ". "
+		<< "Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
+	return 0;
 }
