@@ -3,6 +3,7 @@
 #include "fann_cpp.h"
 #include <vector>
 #include <memory>
+typedef struct EscapeFM escapeFM;
 
 class FannManager
 {
@@ -23,12 +24,12 @@ class FannManager
 	FANN::activation_function_enum bestActivationOutput;
 	bool overtraining;
 	bool haveTestData;
-	FANN::neural_net MinANN[4];
+	FANN::neural_net* MinANN[4];
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
 	
 	void set_weigths();
-	int examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
+	double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
 
 public:
 	FannManager();
@@ -41,6 +42,12 @@ public:
 	void run();
 	void save(std::string);
 	void load_data(std::string);
+};
+
+struct EscapeFM
+{
+	FannManager* fM;
+	EscapeFM::EscapeFM() :fM(nullptr) {}
 };
 
 

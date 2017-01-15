@@ -9,7 +9,6 @@
 #include <iomanip>
 
 
-
 void xor_test()
 {
 	std::cout << std::endl << "XOR test started." << std::endl;
@@ -103,8 +102,8 @@ int main(int argc, char **argv)
 		//xor_test();
 		FannManager fm;
 		fm.load_data("keys_ready.data");
-		//fm.optimumAlgorithm();
-		//fm.optimumActivations();
+		fm.optimumAlgorithm();
+		fm.optimumActivations();
 		fm.run();
 		fm.save("keys");
 	}
