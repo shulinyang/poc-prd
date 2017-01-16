@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 
+#define _DEBUG 1
 #ifdef _DEBUG
 #define DEBUG		// compatibility
 #endif
@@ -30,7 +31,6 @@ protected:
 	FANN::activation_function_enum bestActivationOutput;
 	bool overtraining;
 	bool haveTestData;
-	//FANN::neural_net* MinANN[4];
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
 	

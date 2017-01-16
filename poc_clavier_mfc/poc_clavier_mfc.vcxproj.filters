@@ -42,9 +42,4 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="poc_clavier_mfc.rc">
-      <Filter>Fichiers de ressources</Filter>
-    </ResourceCompile>
-  </ItemGroup>
 </Project>

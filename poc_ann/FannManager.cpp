@@ -5,7 +5,7 @@
 static EscapeFM esc;
 
 FannManager::FannManager()
-	:desired_error(0.0005), learning_rate(0.7), num_layers(4), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
+	:desired_error(0.00001), learning_rate(0.7), num_layers(4), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
 	connection_rate = 1;
 	haveTestData = false;
@@ -17,9 +17,6 @@ FannManager::FannManager()
 	net.set_learning_rate(learning_rate);
 	net.set_activation_steepness_hidden(1.0);
 	net.set_activation_steepness_output(1.0);
-
-	//for (int i = 0; i < 4; i++)
-	//	MinANN[i] = NULL;
 	
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
@@ -36,6 +33,10 @@ FannManager::~FannManager()
 
 void FannManager::optimumAlgorithm()
 {
+#ifdef DEBUG
+	std::cout << "Finding best training algorithm." << std::endl;
+#endif // DEBUG
+
 	net.create_shortcut_array(num_layers, layers.get());
 
 	double min = 1, mse;
@@ -59,6 +60,9 @@ void FannManager::optimumAlgorithm()
 void FannManager::optimumActivations() {
 	if (!haveTestData)
 		return;
+#ifdef DEBUG
+	std::cout << "Finding best activation functions." << std::endl;
+#endif // DEBUG
 
 	net.create_shortcut_array(num_layers, layers.get());
 	
@@ -93,6 +97,10 @@ void FannManager::optimumActivations() {
 
 void FannManager::train()
 {
+#ifdef DEBUG
+	std::cout << "Start training." << std::endl;
+#endif // DEBUG
+
 	net.create_shortcut_array(num_layers, layers.get());
 	set_weigths();
 
@@ -125,10 +133,13 @@ void FannManager::test()
 
 void FannManager::load_data(std::string str)
 {
-	trainData.read_train_from_file(str+"-train.dat");
+	if(!trainData.read_train_from_file(str+"-train.dat"))
+		std::cerr<<"Failed loading train data set."<<std::endl;
 	
 	if (testData.read_train_from_file(str + "-test.dat"))
 		haveTestData = true;
+	else
+		std::cerr << "Failed loading test data set." << std::endl;
 }
 
 

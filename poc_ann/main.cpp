@@ -15,8 +15,8 @@ int main(int argc, char **argv)
 		std::ios::sync_with_stdio(); // Syncronize cout and printf output
 		FannManagerCascade fm;
 		fm.load_data("keys_ready.data");
-		fm.optimumAlgorithm();
-		fm.optimumActivations();
+		//fm.optimumAlgorithm();
+		//fm.optimumActivations();
 		fm.train();
 		fm.test();
 		fm.save("keys");

@@ -1,20 +1,21 @@
 #include "FannManagerCascade.h"
-
+#include <iostream>
 static EscapeFMC esc;
 
 FannManagerCascade::FannManagerCascade()
 	:FannManager()
 {
 	cascadeFirst = true;
-	MaxCandidateEpoch = 150;
-	CandidateLimit = 150;
+	MaxCandidateEpoch = 200;
+	MaxOutEpoch = 200;
+	CandidateLimit = 200;
 	CandidateStag = 12;
+	OutputStag = 12;
 	NumCandidateGroups = 2;
 	WeightMultiplier = 0.4;
-	MaxOutEpoch = 150;
-	CandidateChange = 0.01;
-	OutputChange = 0.01;
-	MaxNeuron = 20;
+	CandidateChange = 0.001;
+	OutputChange = 0.001;
+	MaxNeuron = 30;
 }
 
 FannManagerCascade::~FannManagerCascade()
@@ -40,19 +41,18 @@ void FannManagerCascade::train()
 	if (!haveTestData)
 		return;
 
-	unsigned int max_neurons = MaxNeuron;
-	unsigned int neurons_between_reports = 1;
+	unsigned int neurons_between_reports = 2;
 
 	net.create_shortcut(2, num_input, num_output);
 	esc.fM = this;
-	net.set_callback(CascadeLogOut, NULL);
+	net.set_callback(print_callback, NULL);
 
 	// fann_set_train_error_function(ysa, FANN_ERRORFUNC_LINEAR);
 	//SetFineTuning();
 	SetCascadeTuning();
 
 	cascadeFirst = true; // This will be needed in cont mode  in case net has just been loaded from a file
-	net.cascadetrain_on_data(trainData, max_neurons, neurons_between_reports, desired_error);
+	net.cascadetrain_on_data(trainData, MaxNeuron, neurons_between_reports, desired_error);
 
 }
 
@@ -73,7 +73,8 @@ int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned in
 		printf("%08d : %.08f       : %.08f       : %d ", epochs, trainMSE, testMSE, newBitFail);
 	}
 	else
-		printf("%08d : %.08f       : %d  ", epochs, trainMSE, newBitFail);
+		std::cout << epochs << " : " << trainMSE << "	: " << newBitFail << std::endl;
+
 
 	// Memorizing Begin
 	if (fM->cascadeFirst)

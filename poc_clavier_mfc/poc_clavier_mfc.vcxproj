@@ -156,9 +156,6 @@
     <ClCompile Include="poc_clavier.cpp" />
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="poc_clavier_mfc.rc" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
