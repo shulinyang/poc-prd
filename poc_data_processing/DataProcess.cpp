@@ -235,7 +235,7 @@ bool DataProcess::WriteData(char *FileName,int nOut, float pTrain)
     out.close();
 
     if(nTestData){
-      string fname=FileName;
+      fname=FileName;
       fname+="-test.dat";
 	  out.open(fname.c_str(), std::ios::out);
       if( !out.is_open() ) return false;

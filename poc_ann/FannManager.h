@@ -3,10 +3,16 @@
 #include "fann_cpp.h"
 #include <vector>
 #include <memory>
+
+#ifdef _DEBUG
+#define DEBUG		// compatibility
+#endif
+
 typedef struct EscapeFM escapeFM;
 
 class FannManager
 {
+protected:
 	FANN::neural_net net;
 	FANN::training_data trainData;
 	FANN::training_data testData;
@@ -24,7 +30,7 @@ class FannManager
 	FANN::activation_function_enum bestActivationOutput;
 	bool overtraining;
 	bool haveTestData;
-	FANN::neural_net* MinANN[4];
+	//FANN::neural_net* MinANN[4];
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
 	
@@ -38,10 +44,10 @@ public:
 	void optimumActivations();
 
 	friend int logOut(FANN::neural_net&, FANN::training_data&, unsigned int, unsigned int, float, unsigned int, void*);
-
-	void run();
+	void test();
 	void save(std::string);
 	void load_data(std::string);
+	virtual void train();
 };
 
 struct EscapeFM
@@ -52,5 +58,4 @@ struct EscapeFM
 
 
 int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);
-
 int print_callback(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);

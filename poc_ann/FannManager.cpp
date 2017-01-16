@@ -18,10 +18,8 @@ FannManager::FannManager()
 	net.set_activation_steepness_hidden(1.0);
 	net.set_activation_steepness_output(1.0);
 
-	for (int i = 0; i < 4; i++)
-	{
-		MinANN[i] = NULL;
-	}
+	//for (int i = 0; i < 4; i++)
+	//	MinANN[i] = NULL;
 	
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
@@ -50,6 +48,10 @@ void FannManager::optimumAlgorithm()
 			bestTrain = static_cast<FANN::training_algorithm_enum>(ta);
 		}
 	}
+#ifdef DEBUG
+	std::cout << "Best training method is " << bestTrain<< std::endl;
+#endif // DEBUG
+
 	net.set_training_algorithm(bestTrain);
 	net.destroy();
 }
@@ -79,7 +81,7 @@ void FannManager::optimumActivations() {
 			}
 		}
 	}
-#ifdef _DEBUG
+#ifdef DEBUG
 	std::cout << "Activation function for hidden layer is " << bestActivationHidden << "\n";
 	std::cout << "Activation function for output layer is " << bestActivationOutput << std::endl;
 #endif // DEBUG
@@ -89,7 +91,7 @@ void FannManager::optimumActivations() {
 	net.destroy();
 }
 
-void FannManager::run()
+void FannManager::train()
 {
 	net.create_shortcut_array(num_layers, layers.get());
 	set_weigths();
@@ -102,9 +104,11 @@ void FannManager::run()
 
 	net.train_on_data(trainData, max_iterations,
 		iterations_between_reports, desired_error);
+}
 
+void FannManager::test()
+{
 	std::cout << std::endl << "Testing network." << std::endl;
-
 
 	for (unsigned int i = 0; i < trainData.length_train_data(); ++i)
 	{
@@ -213,8 +217,8 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	if (fM->haveTestData && fM->overtraining) {
 		// Minimum Testing MSE
 		if (fM->MinTestingMSE[1]> testMSE) {
-			if (fM->MinANN[1]) fM->MinANN[1]->destroy();
-			fM->MinANN[1] = &FANN::neural_net(net);
+			//if (fM->MinANN[1]) fM->MinANN[1]->destroy();
+			//fM->MinANN[1] = &FANN::neural_net(net);
 			fM->MinTrainingMSE[1] = trainMSE;
 			fM->MinTestingMSE[1] = testMSE;
 
@@ -238,3 +242,4 @@ int print_callback(FANN::neural_net &net, FANN::training_data &train,
 		<< "Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
 	return 0;
 }
+
