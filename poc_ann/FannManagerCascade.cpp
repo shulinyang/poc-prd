@@ -81,47 +81,34 @@ int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned in
 		for (int i = 0; i<3; i++)
 		{
 			fM->MinTrainingMSE[i] = trainMSE;
-			//MinANN[i] = fann_copy(ann);
 			if (fM->haveTestData && fM->overtraining)
 				fM->MinTestingMSE[i] = testMSE;
 		}
-		//MinANN[3] = ann;
 		fM->cascadeFirst = false;
-
 	}
 
 	// Latest 
 	fM->MinTrainingMSE[3] = trainMSE;
 	fM->MinTestingMSE[3] = testMSE;
-	//     if( MinANN[3]) fann_destroy( MinANN[3]);
-	//       MinANN[3]=fann_copy(ann);
 
 	// Minimum Training MSE
 	if (fM->MinTrainingMSE[0]> trainMSE)
 	{
-		//if (MinANN[0]) fann_destroy(MinANN[0]);
-		//MinANN[0] = fann_copy(ann);
 		fM->MinTrainingMSE[0] = trainMSE;
 		if (fM->haveTestData && fM->overtraining)
 			fM->MinTestingMSE[0] = testMSE;
-
 	}
 	if (fM->haveTestData && fM->overtraining)
 	{
 		// Minimum Testing MSE
 		if (fM->MinTestingMSE[1]> testMSE)
 		{
-			//if (MinANN[1]) fann_destroy(MinANN[1]);
-			//MinANN[1] = fann_copy(ann);
 			fM->MinTrainingMSE[1] = trainMSE;
 			fM->MinTestingMSE[1] = testMSE;
-
 		}
 		// Minimum (Training MSE + Testing MSE )/2 
 		if ((fM->MinTestingMSE[2] + fM->MinTrainingMSE[2])> (trainMSE + testMSE))
 		{
-			//if (MinANN[2]) fann_destroy(MinANN[2]);
-			//MinANN[2] = fann_copy(ann);
 			fM->MinTrainingMSE[2] = trainMSE;
 			fM->MinTestingMSE[2] = testMSE;
 		}

@@ -6,7 +6,7 @@
 #include "fann_cpp.h"
 #include "FannManager.h"
 #include "FannManagerCascade.h"
-
+#include <iostream>
 
 int main(int argc, char **argv)
 {

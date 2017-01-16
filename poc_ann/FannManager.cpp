@@ -69,7 +69,7 @@ void FannManager::optimumActivations() {
 		{
 			set_weigths();
 			mse = examineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j); 
-#ifdef _DEBUG
+#ifdef DEBUG
 			std::cout << static_cast<FANN::activation_function_enum>(i) << " " << (FANN::activation_function_enum)j << " mse: " << mse << std::endl;
 #endif
 
@@ -177,8 +177,7 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
 	unsigned int newBitFail = net.get_bit_fail();
-	//FannManager* fM = reinterpret_cast<FannManager*>(user_data);
-	//user_data = NULL;
+
 	FannManager* fM = esc.fM;
 	if (fM->haveTestData && fM->overtraining)
 	{
@@ -194,11 +193,9 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 		for (int i = 0; i<3; i++)
 		{
 			fM->MinTrainingMSE[i] = trainMSE;
-			//fM->MinANN[i] = &FANN::neural_net(net);
 			if (fM->haveTestData && fM->overtraining)
 				fM->MinTestingMSE[i] = testMSE;
 		}
-		//fM->MinANN[3] = &FANN::neural_net(net);
 	}
 
 	// Latest 
@@ -206,27 +203,24 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	fM->MinTestingMSE[3] = testMSE;
 
 	// Minimum Training MSE
-	if (fM->MinTrainingMSE[0]> trainMSE) {
-		//if (fM->MinANN[0] != NULL) fM->MinANN[0]->destroy();
-		//fM->MinANN[0] = &FANN::neural_net(net);
+	if (fM->MinTrainingMSE[0]> trainMSE)
+	{
 		fM->MinTrainingMSE[0] = trainMSE;
 		if (fM->haveTestData && fM->overtraining)
 			fM->MinTestingMSE[0] = testMSE;
-
 	}
-	if (fM->haveTestData && fM->overtraining) {
+	if (fM->haveTestData && fM->overtraining)
+	{
 		// Minimum Testing MSE
-		if (fM->MinTestingMSE[1]> testMSE) {
-			//if (fM->MinANN[1]) fM->MinANN[1]->destroy();
-			//fM->MinANN[1] = &FANN::neural_net(net);
+		if (fM->MinTestingMSE[1]> testMSE)
+		{
 			fM->MinTrainingMSE[1] = trainMSE;
 			fM->MinTestingMSE[1] = testMSE;
 
 		}
 		// Minimum (Training MSE + Testing MSE )/2 
-		if ((fM->MinTestingMSE[2] + fM->MinTrainingMSE[2])> (trainMSE + testMSE)) {
-			//if (fM->MinANN[2]) fM->MinANN[2]->destroy();
-			//fM->MinANN[2] = &FANN::neural_net(net);
+		if ((fM->MinTestingMSE[2] + fM->MinTrainingMSE[2])> (trainMSE + testMSE))
+		{
 			fM->MinTrainingMSE[2] = trainMSE;
 			fM->MinTestingMSE[2] = testMSE;
 		}
