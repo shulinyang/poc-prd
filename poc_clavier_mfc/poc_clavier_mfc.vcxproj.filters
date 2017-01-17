@@ -27,9 +27,6 @@
     <ClInclude Include="utilities.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="poc_clavier.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Frappe.cpp">
@@ -38,7 +35,7 @@
     <ClCompile Include="utilities.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="poc_clavier.cpp">
+    <ClCompile Include="poc_keyboard.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

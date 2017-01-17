@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <iostream>
 
+#define DEBUG 1
+
 Keystrokes::Keystrokes()
 	:file("keys.data", std::ios::ate)
 {
@@ -21,6 +23,11 @@ void Keystrokes::setTSDown(LPARAM& lp)
 			currentKey.vkCode = st_hook.vkCode;
 			currentKey.keyDown = st_hook.time;
 			currentKey.oneDown = false;
+#ifdef DEBUG
+			std::cout << "flag: " << st_hook.flags << " ";
+			std::cout << "vkcode: " << st_hook.vkCode << " ";
+#endif // DEBUG
+
 	}
 	else if (currentKey.vkCode != st_hook.vkCode)
 	{

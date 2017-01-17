@@ -43,7 +43,7 @@ void processKey(LPARAM lp)
 				if (tmpStr[i] >= 'A' && tmpStr[i] <= 'Z')
 					tmpStr[i] = toupper(tmpStr[i]);
 		}
-		std::cout << ConvertEncodingBack(tmpStr);
+		std::cout << "converted key: " << ConvertEncodingBack(tmpStr) << " ";
 	}
 }
 
