@@ -2,12 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
-#define DEBUG 1
-
-Keystrokes::Keystrokes()
-	:file("keys.data", std::ios::ate)
-{
-}
+Keystrokes::Keystrokes():file("keys.data", std::ios::app){}
 
 Keystrokes::~Keystrokes()
 {
@@ -16,12 +11,12 @@ Keystrokes::~Keystrokes()
 
 void Keystrokes::setTSDown(LPARAM& lp)
 {
-	KBDLLHOOKSTRUCT st_hook = *((KBDLLHOOKSTRUCT*)lp);
+	KBDLLHOOKSTRUCT* st_hook = ((KBDLLHOOKSTRUCT*)lp);
 
-	if (currentKey.oneDown)
+	if (currentKey.oneDown && st_hook->flags!=16)
 	{
-			currentKey.vkCode = st_hook.vkCode;
-			currentKey.keyDown = st_hook.time;
+			currentKey.vkCode = st_hook->vkCode;
+			currentKey.keyDown = st_hook->time;
 			currentKey.oneDown = false;
 #ifdef DEBUG
 			std::cout << "flag: " << st_hook.flags << " ";
@@ -29,28 +24,28 @@ void Keystrokes::setTSDown(LPARAM& lp)
 #endif // DEBUG
 
 	}
-	else if (currentKey.vkCode != st_hook.vkCode)
+	else if (currentKey.vkCode != st_hook->vkCode && st_hook->flags!=16)
 	{
 		waitingKey.push_back(currentKey);
-		currentKey = key(st_hook.time, st_hook.vkCode);
+		currentKey = key(st_hook->time, st_hook->vkCode);
 	}
 }
 
 void Keystrokes::setTSUp(LPARAM& lp)
 {
-	KBDLLHOOKSTRUCT st_hook = *((KBDLLHOOKSTRUCT*)lp);
+	KBDLLHOOKSTRUCT* st_hook = ((KBDLLHOOKSTRUCT*)lp);
 	
-	if (currentKey.vkCode == st_hook.vkCode)
+	if (currentKey.vkCode == st_hook->vkCode)
 	{
-		currentKey.keyUp = st_hook.time;
+		currentKey.keyUp = st_hook->time;
 		currentKey.oneDown = true;
 		addCurrentKey();
 	}
-	else
+	else if (st_hook->flags != 16)
 		for (size_t i = 0; i < waitingKey.size(); i++)
-			if (waitingKey[i].vkCode == st_hook.vkCode)
+			if (waitingKey[i].vkCode == st_hook->vkCode)
 			{
-				waitingKey[i].keyUp = st_hook.time;
+				waitingKey[i].keyUp = st_hook->time;
 				keystrokes.push_back(waitingKey[i]);
 				waitingKey.erase(waitingKey.begin() + i);
 				break;

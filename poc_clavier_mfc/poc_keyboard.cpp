@@ -25,10 +25,10 @@ __declspec(dllexport) LRESULT CALLBACK handlerKeys(int code, WPARAM wp, LPARAM l
 	else if (code == HC_ACTION &&  wp == WM_KEYUP)
 	{
 		keystrokes.setTSUp(lp);
-#ifdef _DEBUG
+#ifdef DEBUG
 		processKey(lp);
-#endif
 		std::cout << " ["<< keystrokes.getLastTimePressed()<<"] \n";
+#endif
 	}
 	
 	return CallNextHookEx(kbdhook, code, wp, lp);
