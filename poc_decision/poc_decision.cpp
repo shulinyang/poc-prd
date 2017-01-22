@@ -9,10 +9,10 @@ int main()
 	FannManager fM;
 	fM.load_data("keys_ready.data");
 	fM.load_network("keys.net");
-	std::ofstream file("scoring.txt", std::ios::out);
+	std::ofstream file("scoring.txt", std::ios::app);
 	if (file.is_open())
 	{
-		file << fM.test();
+		file << fM.test() << std::endl;
 		file.close();
 	}
 

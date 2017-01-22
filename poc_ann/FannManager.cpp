@@ -5,7 +5,7 @@
 static EscapeFM esc;
 
 FannManager::FannManager()
-	:desired_error(0.00001), learning_rate(0.7), num_layers(4), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
+	:desired_error(0.00001), learning_rate(0.7), num_layers(5), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
 	score = -1;
 	connection_rate = 1;
@@ -22,7 +22,7 @@ FannManager::FannManager()
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 	for (size_t i = 1; i < (num_layers - 2); i++)
-		layers[i] = 3;
+		layers[i] = 5;
 	layers[num_layers - 1] = num_output;
 }
 

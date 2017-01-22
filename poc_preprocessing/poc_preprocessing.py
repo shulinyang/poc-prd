@@ -17,7 +17,7 @@ def reading(filename: str) -> list:
 def process(data: list) -> list:
     new_data = list()
     for i in range(len(data)):
-        if (int(data[i][2]) - int(data[i][1])) > 0:
+        if (int(data[i][2]) - int(data[i][1])) > 16:
             new_data.append([data[i][0], int(data[i][2]) - int(data[i][1])])
     return new_data
 
