@@ -1,6 +1,4 @@
 #pragma once
-#include "floatfann.h"
-#include "fann_cpp.h"
 #include "FannManager.h"
 
 class FannManagerCascade : public FannManager

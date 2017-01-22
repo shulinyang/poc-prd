@@ -1,5 +1,5 @@
 #pragma once
-#include "floatfann.h"
+#include "doublefann.h"
 #include "fann_cpp.h"
 #include <vector>
 #include <memory>
@@ -33,7 +33,7 @@ protected:
 	bool haveTestData;
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
-	
+	double score;
 	void set_weigths();
 	double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
 
@@ -42,9 +42,9 @@ public:
 	~FannManager();
 	void optimumAlgorithm();
 	void optimumActivations();
-
+	inline bool load_network(std::string filename) {return net.create_from_file(filename);}
 	friend int logOut(FANN::neural_net&, FANN::training_data&, unsigned int, unsigned int, float, unsigned int, void*);
-	void test();
+	double test();
 	void save(std::string);
 	void load_data(std::string);
 	virtual void train();

@@ -1,4 +1,3 @@
-#include "main.h"
 #include "DataProcess.h"
 
 
@@ -9,6 +8,6 @@ int main()
 	data.ScaleAll();
 	data.WriteScaleParameters("keys.scale.txt");
 	data.Shuffle();
-	data.WriteData("keys_ready.data", 1, 0.6);
+	data.WriteData("keys_ready.data", 1, 0.75);
 	return 0;
 }

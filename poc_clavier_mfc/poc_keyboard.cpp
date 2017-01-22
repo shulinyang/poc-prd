@@ -60,7 +60,9 @@ int main()
     if (hModule != nullptr)
     {
 
-			std::cout << "Ok, let's work !" << std::endl;
+			std::cout << "POC Keyboard\n" << "Cette application intercepte les messages Windows \n";
+			std::cout << "emis lors de la pression sur une touche. \nA partir de ces messages, l'application recuppere le code touche";
+			std::cout << " et son timestamp.\n Elle stocke les donnees dans un fichier. Ces informations seront pseudo-anonymees."<<std::endl;
 			MSG msg;
 			running = true;
 			while (running) {

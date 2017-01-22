@@ -7,6 +7,7 @@ static EscapeFM esc;
 FannManager::FannManager()
 	:desired_error(0.00001), learning_rate(0.7), num_layers(4), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
+	score = -1;
 	connection_rate = 1;
 	haveTestData = false;
 	overtraining = false;
@@ -114,10 +115,12 @@ void FannManager::train()
 		iterations_between_reports, desired_error);
 }
 
-void FannManager::test()
+double FannManager::test()
 {
+	if (!haveTestData)
+		return -1;
 	std::cout << std::endl << "Testing network." << std::endl;
-
+	score = 0.0;
 	for (unsigned int i = 0; i < trainData.length_train_data(); ++i)
 	{
 		// Run the network on the test data
@@ -128,7 +131,10 @@ void FannManager::test()
 			<< ", should be " << trainData.get_output()[i][0] << ", "
 			<< "difference = " << std::noshowpos
 			<< std::abs(*calc_out - trainData.get_output()[i][0]) << std::endl;
+		score += *calc_out - trainData.get_output()[i][0];
 	}
+	score /= trainData.length_train_data();
+	return score;
 }
 
 void FannManager::load_data(std::string str)

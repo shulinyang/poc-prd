@@ -164,10 +164,6 @@ void DataProcess::ScaleAll()
   }
 }
 
-bool DataProcess::ParseData()
-{
-	return true;
-}
 
 DataItem * DataProcess::GetItem(int i)
 {
@@ -196,7 +192,7 @@ bool DataProcess::WriteScaleParameters(char *FileName)
     return true;
 }
 
-bool DataProcess::WriteData(char *FileName,int nOut, float pTrain)
+bool DataProcess::WriteData(char *FileName,int nOut, double pTrain)
 {
     ofstream out;
     string s;
@@ -260,8 +256,6 @@ bool DataProcess::WriteData(char *FileName,int nOut, float pTrain)
 
     }
     return true;
-
-
 }
 
 void DataProcess::Shuffle()
@@ -324,8 +318,8 @@ bool TimeSeri::LoadRawData(char *file)
    return (count) ? true : false;
 }
 
-/*
-void TimeSeri::Normalize()
+
+/*void TimeSeri::Normalize()
 {
 // veriler -0.8 ile 0.8 arsýna çekiliyor
  double range=(max-min)/1.6;
@@ -348,9 +342,7 @@ void TimeSeri::Scale()
       data[i]= (((maxv-minv)*(data[i]-min))/(max-min))+minv;
     }
 
-}
-
-*/
+}*/
 
 bool TimeSeri::WriteScaleParameters(char *FileName)
 {
@@ -374,11 +366,8 @@ bool TimeSeri::WriteScaleParameters(char *FileName)
 }
 
 
-
-
 bool TimeSeri::WriteData(char *file, float pTrain)
 {
-   // FILE *out;
    char buf[100];
    string tmp;
    string s;
@@ -405,11 +394,14 @@ bool TimeSeri::WriteData(char *file, float pTrain)
      outdata.push_back(tmp);
    }
 // Shuffle Kýsmý
-    if(shuffle){
+    if(shuffle)
+	{
       unsigned long swap;
-	  for(unsigned long i= 0; i < ndata /2 ; i++){
+	  for(unsigned long i= 0; i < ndata /2 ; i++)
+	  {
         swap = (unsigned long) (rand() % (unsigned long)ndata);
-        if(i!=swap){
+        if(i!=swap)
+		{
           tmp=indata[i];
           indata[i]=indata[swap];
           indata[swap]=tmp;
@@ -418,12 +410,8 @@ bool TimeSeri::WriteData(char *file, float pTrain)
           outdata[swap]=tmp;
         }
 	  }
-
     }
 
-
-
-//
     ofstream out;
 
     unsigned long nTrainData,nTestData;
@@ -461,10 +449,7 @@ bool TimeSeri::WriteData(char *file, float pTrain)
       out.close();
 
     }
-//
    return true;
-
-
 }
 
 
