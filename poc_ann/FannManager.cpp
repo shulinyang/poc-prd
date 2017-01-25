@@ -2,10 +2,12 @@
 #include <iostream>
 #include <iomanip>
 
+#define DEBUG 1
+
 static EscapeFM esc;
 
 FannManager::FannManager()
-	:desired_error(0.00001), learning_rate(0.7), num_layers(5), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
+	:desired_error(0.00001), learning_rate(0.7), num_layers(7), num_input(1), num_output(1), max_iterations(30000), iterations_between_reports(1000)
 {
 	score = -1;
 	connection_rate = 1;
@@ -21,7 +23,8 @@ FannManager::FannManager()
 	
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
-	for (size_t i = 1; i < (num_layers - 2); i++)
+#pragma omp parallel for num_threads(2)
+	for (int i = 1; i < (num_layers - 2); i++)
 		layers[i] = 5;
 	layers[num_layers - 1] = num_output;
 }
@@ -40,11 +43,12 @@ void FannManager::optimumAlgorithm()
 
 	net.create_shortcut_array(num_layers, layers.get());
 
-	double min = 1, mse;
+	double min = 1;// , mse;
+//#pragma omp parallel for num_threads(3)
 	for (int ta = FANN::TRAIN_INCREMENTAL; ta <= FANN::TRAIN_SARPROP; ta++)
 	{
 		set_weigths();
-		mse = examineTrain(static_cast<FANN::training_algorithm_enum>(ta), bestActivationHidden, bestActivationOutput);
+		double mse = examineTrain(static_cast<FANN::training_algorithm_enum>(ta), bestActivationHidden, bestActivationOutput);
 		if (mse<min) {
 			min = mse;
 			bestTrain = static_cast<FANN::training_algorithm_enum>(ta);
@@ -67,13 +71,14 @@ void FannManager::optimumActivations() {
 
 	net.create_shortcut_array(num_layers, layers.get());
 	
-	double min = 1, mse;
+	double min = 1;// , mse;
+//#pragma omp parallel for num_threads(4)
 	for (int i = 2; i<13; i++)
 	{
 		for (int j = 2; j<13; j++)
 		{
 			set_weigths();
-			mse = examineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j); 
+			double mse = examineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j); 
 #ifdef DEBUG
 			std::cout << static_cast<FANN::activation_function_enum>(i) << " " << (FANN::activation_function_enum)j << " mse: " << mse << std::endl;
 #endif
@@ -121,7 +126,8 @@ double FannManager::test()
 		return -1;
 	std::cout << std::endl << "Testing network." << std::endl;
 	score = 0.0;
-	for (unsigned int i = 0; i < trainData.length_train_data(); ++i)
+#pragma omp parallel for num_threads(4)
+	for (int i = 0; i < trainData.length_train_data(); ++i)
 	{
 		// Run the network on the test data
 		fann_type *calc_out = net.run(trainData.get_input()[i]);
@@ -131,7 +137,7 @@ double FannManager::test()
 			<< ", should be " << trainData.get_output()[i][0] << ", "
 			<< "difference = " << std::noshowpos
 			<< std::abs(*calc_out - trainData.get_output()[i][0]) << std::endl;
-		score += *calc_out - trainData.get_output()[i][0];
+		score += abs(*calc_out - trainData.get_output()[i][0]);
 	}
 	score /= trainData.length_train_data();
 	return score;
@@ -207,6 +213,7 @@ int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_e
 	// Memorizing Begin
 	if (epochs == 1)
 	{
+#pragma omp parallel for num_threads(2)
 		for (int i = 0; i<3; i++)
 		{
 			fM->MinTrainingMSE[i] = trainMSE;
@@ -250,7 +257,7 @@ int print_callback(FANN::neural_net &net, FANN::training_data &train,
 	float desired_error, unsigned int epochs, void *user_data)
 {
 	std::cout << "Epochs     " << std::setw(8) << epochs << ". "
-		<< "Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
+		<< " Bit fail: " << net.get_bit_fail() <<" Current Error: " << std::left << net.get_MSE() << std::right << std::endl;
 	return 0;
 }
 

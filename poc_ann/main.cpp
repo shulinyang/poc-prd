@@ -7,16 +7,22 @@
 #include <iostream>
 #include <fstream>
 
+#define cascade 1
+
 int main(int argc, char **argv)
 {
 	try
 	{
 		std::ios::sync_with_stdio(); // Syncronize cout and printf output
+#if cascade
+		FannManagerCascade fm;
+#else
 		FannManager fm;
+#endif // cascade
 		fm.load_data("keys_ready.data");
 		fm.optimumAlgorithm();
 		fm.optimumActivations();
-		fm.optimumAlgorithm();
+		//fm.optimumAlgorithm();
 		fm.train();
 		std::ofstream file("scoring.txt", std::ios::app);
 		if (file.is_open())

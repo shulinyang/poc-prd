@@ -6,16 +6,16 @@ FannManagerCascade::FannManagerCascade()
 	:FannManager()
 {
 	cascadeFirst = true;
-	MaxCandidateEpoch = 200;
-	MaxOutEpoch = 200;
-	CandidateLimit = 200;
-	CandidateStag = 12;
-	OutputStag = 12;
-	NumCandidateGroups = 2;
-	WeightMultiplier = 0.4;
-	CandidateChange = 0.001;
-	OutputChange = 0.001;
-	MaxNeuron = 30;
+	MaxCandidateEpoch = 700;
+	MaxOutEpoch = 700;
+	CandidateLimit = 700;
+	CandidateStag = 20;
+	OutputStag = 20;
+	NumCandidateGroups = 5;
+	WeightMultiplier = 0.3;
+	CandidateChange = 0.0005;
+	OutputChange = 0.0005;
+	MaxNeuron = 50;
 }
 
 FannManagerCascade::~FannManagerCascade()

@@ -4,7 +4,6 @@
 #include <vector>
 #include <memory>
 
-#define _DEBUG 1
 #ifdef _DEBUG
 #define DEBUG		// compatibility
 #endif
@@ -33,6 +32,7 @@ protected:
 	bool haveTestData;
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
+	FANN::neural_net netPara[4];
 	double score;
 	void set_weigths();
 	double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
