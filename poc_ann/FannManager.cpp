@@ -2,6 +2,8 @@
 #include <iostream>
 #include <iomanip>
 
+#define DEBUG
+
 FannManager::FannManager()
 	:desired_error(0.00001), learning_rate(0.7), num_layers(7), num_input(1), num_output(1)
 {

@@ -8,27 +8,48 @@ FannManagerCascade::FannManagerCascade()
 	:FannManager()
 {
 	cascadeFirst = true;
-	MaxCandidateEpoch = 700;
-	MaxOutEpoch = 700;
-	CandidateLimit = 700;
-	CandidateStag = 20;
-	OutputStag = 20;
-	NumCandidateGroups = 4;
-	WeightMultiplier = 0.3;
-	CandidateChange = 0.0005;
-	OutputChange = 0.0005;
-	MaxNeuron = 50;
+
 	num_layers = 2;
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 	layers[1] = num_output;
+	set_low_precision();
+}
+
+void FannManagerCascade::set_high_precision()
+{
+	MaxCandidateEpoch = 700;
+	MaxOutEpoch = 700;
+	CandidateLimit = 700;
+	CandidateStag = 15;
+	OutputStag = 15;
+	NumCandidateGroups = 4;
+	WeightMultiplier = 0.3;
+	CandidateChange = 0.00005;
+	OutputChange = 0.00005;
+	MaxNeuron = 50;
 	SetCascadeTuning();
 }
 
+void FannManagerCascade::set_low_precision()
+{
+	MaxCandidateEpoch = 50;
+	MaxOutEpoch = 50;
+	CandidateLimit = 50;
+	CandidateStag = 12;
+	OutputStag = 12;
+	NumCandidateGroups = 2;
+	WeightMultiplier = 0.4;
+	CandidateChange = 0.005;
+	OutputChange = 0.005;
+	MaxNeuron = 18;
+	SetCascadeTuning();
+}
 
 FannManagerCascade::~FannManagerCascade()
 {
 }
+
 
 
 void FannManagerCascade::SetCascadeTuning()
@@ -50,7 +71,7 @@ void FannManagerCascade::train()
 		return;
 
 	unsigned int neurons_between_reports = 2;
-
+	set_high_precision();
 	net.create_shortcut(2, num_input, num_output);
 	esc.fM = this;
 	net.set_callback(print_callback, NULL);

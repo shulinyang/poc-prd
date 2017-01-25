@@ -14,11 +14,14 @@ class FannManagerCascade : public FannManager
 	unsigned int MaxCandidateEpoch;
 	unsigned int NumCandidateGroups;
 	unsigned int MaxNeuron;
+	void set_high_precision();
+	void set_low_precision();
+	void SetCascadeTuning();
 	double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
 public:
 	FannManagerCascade();
 	~FannManagerCascade();
-	void SetCascadeTuning();
+	
 	void train();
 	friend int CascadeLogOut(FANN::neural_net &, FANN::training_data &, unsigned int, unsigned int, float, unsigned int, void *);
 
