@@ -2,7 +2,7 @@
 #define DEBUG		// compatibility
 #endif
 
-#include "FannManager.h"
+#include "FannManagerNormal.h"
 #include "FannManagerCascade.h"
 #include <iostream>
 #include <fstream>
@@ -17,9 +17,10 @@ int main(int argc, char **argv)
 #if cascade
 		FannManagerCascade fm;
 #else
-		FannManager fm;
+		FannManagerNormal fm;
 #endif // cascade
-		fm.load_data("keys_ready.data");
+		fm.load_train_data("keys_ready.data-train.dat");
+		fm.load_test_data("keys_ready.data-test.dat");
 		fm.optimumAlgorithm();
 		fm.optimumActivations();
 		//fm.optimumAlgorithm();

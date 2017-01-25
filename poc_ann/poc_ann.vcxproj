@@ -167,11 +167,13 @@
     <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\doublefann.c" />
     <ClCompile Include="FannManager.cpp" />
     <ClCompile Include="FannManagerCascade.cpp" />
+    <ClCompile Include="FannManagerNormal.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FannManager.h" />
     <ClInclude Include="FannManagerCascade.h" />
+    <ClInclude Include="FannManagerNormal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

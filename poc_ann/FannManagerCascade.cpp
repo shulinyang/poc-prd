@@ -2,6 +2,8 @@
 #include <iostream>
 static EscapeFMC esc;
 
+#define DEBUG
+
 FannManagerCascade::FannManagerCascade()
 	:FannManager()
 {
@@ -11,12 +13,18 @@ FannManagerCascade::FannManagerCascade()
 	CandidateLimit = 700;
 	CandidateStag = 20;
 	OutputStag = 20;
-	NumCandidateGroups = 5;
+	NumCandidateGroups = 4;
 	WeightMultiplier = 0.3;
 	CandidateChange = 0.0005;
 	OutputChange = 0.0005;
 	MaxNeuron = 50;
+	num_layers = 2;
+	layers = std::make_unique<unsigned int[]>(num_layers);
+	layers[0] = num_input;
+	layers[1] = num_output;
+	SetCascadeTuning();
 }
+
 
 FannManagerCascade::~FannManagerCascade()
 {
@@ -49,18 +57,39 @@ void FannManagerCascade::train()
 
 	// fann_set_train_error_function(ysa, FANN_ERRORFUNC_LINEAR);
 	//SetFineTuning();
-	SetCascadeTuning();
 
 	cascadeFirst = true; // This will be needed in cont mode  in case net has just been loaded from a file
 	net.cascadetrain_on_data(trainData, MaxNeuron, neurons_between_reports, desired_error);
 
 }
 
+double FannManagerCascade::examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact)
+{
+	net.set_training_algorithm(tal);
+	net.set_activation_function_hidden(hact);
+	net.set_activation_function_output(oact);
+	esc.fM = this;
+	net.set_callback(CascadeLogOut, NULL);
+	net.cascadetrain_on_data(trainData, 8, 2, desired_error);
+
+	double trainMSE = net.get_MSE();
+	double testMSE = -1;
+	if (haveTestData && overtraining)
+	{
+		net.init_weights(trainData);
+		net.reset_MSE();
+		net.test_data(testData);
+		testMSE = net.get_MSE();
+		return (trainMSE + testMSE) / 2;
+	}
+	else
+		return trainMSE;
+}
+
 int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
 {
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
-	unsigned int newBitFail = net.get_bit_fail();
 
 	FannManagerCascade* fM = esc.fM;
 
@@ -70,11 +99,12 @@ int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned in
 		net.test_data(fM->testData);
 		testMSE = net.get_MSE();
 		net.test_data(fM->trainData);
-		printf("%08d : %.08f       : %.08f       : %d ", epochs, trainMSE, testMSE, newBitFail);
+		printf("%08d : %.08f       : %.08f       : %d ", epochs, trainMSE, testMSE, net.get_bit_fail());
 	}
+#ifdef DEBUG
 	else
-		std::cout << epochs << " : " << trainMSE << "	: " << newBitFail << std::endl;
-
+		std::cout << epochs << " : " << trainMSE << "	: " << net.get_bit_fail() << std::endl;
+#endif // DEBUG
 
 	// Memorizing Begin
 	if (fM->cascadeFirst)

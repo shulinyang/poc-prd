@@ -8,7 +8,6 @@
 #define DEBUG		// compatibility
 #endif
 
-typedef struct EscapeFM escapeFM;
 
 class FannManager
 {
@@ -21,10 +20,8 @@ protected:
 	double connection_rate;
 	unsigned int num_layers;
 	unsigned int num_input;
-	std::unique_ptr<unsigned int[]> layers;
 	unsigned int num_output;
-	unsigned int max_iterations;
-	unsigned int iterations_between_reports;
+
 	FANN::training_algorithm_enum bestTrain;
 	FANN::activation_function_enum bestActivationHidden;
 	FANN::activation_function_enum bestActivationOutput;
@@ -32,10 +29,9 @@ protected:
 	bool haveTestData;
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
-	FANN::neural_net netPara[4];
 	double score;
-	void set_weigths();
-	double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact);
+	std::unique_ptr<unsigned int[]> layers;
+	virtual double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact) = 0;
 
 public:
 	FannManager();
@@ -43,19 +39,11 @@ public:
 	void optimumAlgorithm();
 	void optimumActivations();
 	inline bool load_network(std::string filename) {return net.create_from_file(filename);}
-	friend int logOut(FANN::neural_net&, FANN::training_data&, unsigned int, unsigned int, float, unsigned int, void*);
 	double test();
 	void save(std::string);
-	void load_data(std::string);
-	virtual void train();
+	virtual void train() = 0;
+	void load_train_data(std::string filename);
+	void load_test_data(std::string filename);
 };
 
-struct EscapeFM
-{
-	FannManager* fM;
-	EscapeFM::EscapeFM() :fM(nullptr) {}
-};
-
-
-int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);
 int print_callback(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);
