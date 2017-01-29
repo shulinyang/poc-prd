@@ -6,11 +6,11 @@ typedef struct MEvent MEvent;
 
 struct MEvent
 {
-	long long keyUp, keyDown;
+	long long key;
 	long typeClick;
-	MEvent::MEvent(DWORD keyDown, DWORD vkcode)
-		:keyDown(keyDown), typeClick(vkcode){}
-	MEvent::MEvent():typeClick(-1){}
+	long typeEvent;
+	long long flag;
+	POINT pt;
 };
 
 class MouseEvent
@@ -19,10 +19,8 @@ class MouseEvent
 	std::ofstream file;
 
 public:
-	void setDownEvent(LPARAM& lp);
-	void setUpEvent(LPARAM& lp);
+	void setEvent(WPARAM & wp, LPARAM& lp);
 	void writeData();
-	inline long long getCurrentPressedTime() { return currentEvent.keyUp - currentEvent.keyDown; }
 	MouseEvent();
 	~MouseEvent();
 };

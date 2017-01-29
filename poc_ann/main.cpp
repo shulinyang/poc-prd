@@ -21,8 +21,8 @@ int main(int argc, char **argv)
 #endif // cascade
 		fm.load_train_data("keys_ready.data-train.dat");
 		fm.load_test_data("keys_ready.data-test.dat");
-		fm.optimumAlgorithm();
-		fm.optimumActivations();
+		//fm.optimumAlgorithm();
+		//fm.optimumActivations();
 		//fm.optimumAlgorithm();
 		fm.train();
 		std::ofstream file("scoring.txt", std::ios::app);

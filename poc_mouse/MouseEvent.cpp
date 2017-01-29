@@ -8,31 +8,22 @@ MouseEvent::~MouseEvent()
 	file.close();
 }
 
-void MouseEvent::setDownEvent(LPARAM & lp)
+void MouseEvent::setEvent(WPARAM & wp, LPARAM & lp)
 {
+	currentEvent.typeEvent = wp;
 	MSLLHOOKSTRUCT* st_hook = (MSLLHOOKSTRUCT*)lp;
 	currentEvent.typeClick = st_hook->mouseData;
-	currentEvent.keyDown = st_hook->time;
+	currentEvent.key = st_hook->time;
+	currentEvent.flag = st_hook->flags;
+	currentEvent.pt = st_hook->pt;
 }
 
-void MouseEvent::setUpEvent(LPARAM & lp)
-{
-	MSLLHOOKSTRUCT* st_hook = (MSLLHOOKSTRUCT*)lp;
-	if (currentEvent.typeClick == st_hook->mouseData)
-	{
-		currentEvent.keyUp = st_hook->time;
-#ifdef DEBUG
-		std::cout << "event: " << currentEvent.typeClick << " ";
-		std::cout << "duration: " << currentEvent.keyUp - currentEvent.keyDown << "\n";
-#endif // DEBUG
-	}
-
-}
 void MouseEvent::writeData()
 {
 	if (file.is_open())
 	{
-		file << currentEvent.typeClick << ";" << currentEvent.keyDown << ";" << currentEvent.keyUp << std::endl;
+		file << currentEvent.typeEvent << ";" << currentEvent.typeClick << "; " << currentEvent.key
+			<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";"<< currentEvent.flag << std::endl;
 	}
 	else
 		std::cerr << "File Failed to open" << std::endl;

@@ -16,12 +16,8 @@ MouseEvent mouseClick;
 
 __declspec(dllexport) LRESULT CALLBACK handlerMouse(int code, WPARAM wp, LPARAM lp)
 {
-	if (code == HC_ACTION &&  wp == WM_LBUTTONDOWN) {
-		mouseClick.setDownEvent(lp);
-	}
-	else if (code == HC_ACTION && wp == WM_LBUTTONUP)
-	{
-		mouseClick.setUpEvent(lp);
+	if (code == HC_ACTION) {
+		mouseClick.setEvent(wp, lp);
 		mouseClick.writeData();
 	}
 	

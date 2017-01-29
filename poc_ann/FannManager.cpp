@@ -11,8 +11,9 @@ FannManager::FannManager()
 	connection_rate = 1;
 	haveTestData = false;
 	overtraining = false;
-	bestTrain = FANN::TRAIN_RPROP;
-	bestActivationHidden = bestActivationOutput = FANN::SIGMOID_SYMMETRIC_STEPWISE;
+	bestTrain = FANN::TRAIN_QUICKPROP;
+	bestActivationHidden = FANN::THRESHOLD_SYMMETRIC;
+	bestActivationOutput = FANN::SIGMOID_STEPWISE;
 	net.set_activation_function_hidden(bestActivationHidden);
 	net.set_activation_function_output(bestActivationOutput);
 	net.set_learning_rate(learning_rate);
@@ -35,19 +36,19 @@ double FannManager::test()
 	std::cout << std::endl << "Testing network." << std::endl;
 	score = 0.0;
 #pragma omp parallel for num_threads(4)
-	for (int i = 0; i < trainData.length_train_data(); ++i)
+	for (int i = 0; i < testData.length_train_data(); ++i)
 	{
 		// Run the network on the test data
-		fann_type *calc_out = net.run(trainData.get_input()[i]);
+		fann_type *calc_out = net.run(testData.get_input()[i]);
 
-		std::cout << "XOR test (" << std::showpos << trainData.get_input()[i][0] << ", "
-			<< trainData.get_input()[i][1] << ") -> " << *calc_out
-			<< ", should be " << trainData.get_output()[i][0] << ", "
+		std::cout << "XOR test (" << std::showpos << testData.get_input()[i][0] << ", "
+			<< testData.get_input()[i][1] << ") -> " << *calc_out
+			<< ", should be " << testData.get_output()[i][0] << ", "
 			<< "difference = " << std::noshowpos
-			<< std::abs(*calc_out - trainData.get_output()[i][0]) << std::endl;
-		score += abs(*calc_out - trainData.get_output()[i][0]);
+			<< std::abs(*calc_out - testData.get_output()[i][0]) << std::endl;
+		score += abs(*calc_out - testData.get_output()[i][0]);
 	}
-	score /= trainData.length_train_data();
+	score /= testData.length_train_data();
 	return score;
 }
 
