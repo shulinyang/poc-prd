@@ -20,11 +20,19 @@ void MouseEvent::setEvent(WPARAM & wp, LPARAM & lp)
 
 void MouseEvent::writeData()
 {
+
+#ifdef DEBUG
+	std::cout << currentEvent.typeEvent << ";" << currentEvent.typeClick << ";" << currentEvent.key
+		<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";" << currentEvent.flag << std::endl;
+#else
 	if (file.is_open())
 	{
-		file << currentEvent.typeEvent << ";" << currentEvent.typeClick << "; " << currentEvent.key
-			<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";"<< currentEvent.flag << std::endl;
+		file << currentEvent.typeEvent << ";" << currentEvent.typeClick << ";" << currentEvent.key
+			<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";" << currentEvent.flag << std::endl;
 	}
 	else
 		std::cerr << "File Failed to open" << std::endl;
+
+#endif // DEBUG
+
 }

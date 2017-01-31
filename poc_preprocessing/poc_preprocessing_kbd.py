@@ -42,8 +42,9 @@ def writing(filename: str, data: list):
 
 
 def meta(basename: str):
-    writing(basename + "_proper.data", process(reading(basename + ".data")))
-    writing(basename + "_inter.data", process_interkey(reading(basename + ".data"), 6000))
+    data = process(reading(basename + ".data"))
+    data += process_interkey(reading(basename + ".data"), 5500)
+    writing(basename + "_proper.data", data)
 
 
 if __name__ == '__main__':

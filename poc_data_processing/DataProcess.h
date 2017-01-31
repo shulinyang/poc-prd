@@ -26,7 +26,6 @@ public:
     void SetData(unsigned long i,double value);
     void Add(double value);
     // void DeleteData(unsigned long i);
-    double* Histogram(int n=10);
     void Scale( double iminv, double imaxv );
     void Scale();
     inline void Swap(unsigned long i1,unsigned long i2) { std::swap(data[i1], data[i2]); }
@@ -65,7 +64,6 @@ class DataProcess
 public:
 	DataProcess();
 	bool LoadRawData(std::string filename);
-	//bool ParseData();
 	bool WriteData(std::string FileName,int nOut, double pTrain);
 	bool WriteScaleParameters(char *FileName);
 	DataItem *GetItem(int i);

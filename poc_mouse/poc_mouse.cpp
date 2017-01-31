@@ -16,7 +16,7 @@ MouseEvent mouseClick;
 
 __declspec(dllexport) LRESULT CALLBACK handlerMouse(int code, WPARAM wp, LPARAM lp)
 {
-	if (code == HC_ACTION) {
+	if (code == HC_ACTION && wp != WM_MOUSEMOVE) {
 		mouseClick.setEvent(wp, lp);
 		mouseClick.writeData();
 	}
