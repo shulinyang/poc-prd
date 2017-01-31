@@ -1,6 +1,8 @@
 #pragma once
+#pragma warning(push, 0)
 #include "doublefann.h"
 #include "fann_cpp.h"
+#pragma warning(pop)
 #include <vector>
 #include <memory>
 
@@ -46,4 +48,4 @@ public:
 	void load_test_data(std::string filename);
 };
 
-int print_callback(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);
+int print_callback(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, double desired_error, unsigned int epochs, void *user_data);

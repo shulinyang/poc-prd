@@ -23,11 +23,11 @@ public:
 	~FannManagerCascade();
 	
 	void train();
-	friend int CascadeLogOut(FANN::neural_net &, FANN::training_data &, unsigned int, unsigned int, float, unsigned int, void *);
+	friend int CascadeLogOut(FANN::neural_net &, FANN::training_data &, unsigned int, unsigned int, double, unsigned int, void *);
 
 };
 
-int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data);
+int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, double desired_error, unsigned int epochs, void *user_data);
 
 struct EscapeFMC
 {

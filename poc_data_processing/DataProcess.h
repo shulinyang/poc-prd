@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <string>
 
 /*
 	Extract from FannTool
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-int GetnItem(char *FileName);
+int GetnItem(std::string FileName);
 
 class DataItem
 {
@@ -63,9 +64,9 @@ class DataProcess
 {
 public:
 	DataProcess();
-	bool LoadRawData(char * filename);
+	bool LoadRawData(std::string filename);
 	//bool ParseData();
-	bool WriteData(char *FileName,int nOut, double pTrain);
+	bool WriteData(std::string FileName,int nOut, double pTrain);
 	bool WriteScaleParameters(char *FileName);
 	DataItem *GetItem(int i);
 	inline unsigned long GetNData(){return nData;}
@@ -81,26 +82,5 @@ protected:
 	unsigned long nData;
 
 };
-
-
-// Time Series Reader
-
-class TimeSeri : public DataItem
-{
-public:
-	TimeSeri();
-	bool shuffle;
-	bool LoadRawData(char *file);
-	bool WriteData(char *file,float pTrain);
-	bool WriteScaleParameters(char *FileName);
-	unsigned long GetNData(){return (count-nInput-nOutput);}
-	virtual ~TimeSeri(){ data.clear(); }
-
-//    protected:
-	long count;
-	int nInput;
-	int nOutput;
-};
-
 
 #endif // DATAPROCESS_H

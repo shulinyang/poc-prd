@@ -19,8 +19,11 @@ int main(int argc, char **argv)
 #else
 		FannManagerNormal fm;
 #endif // cascade
-		fm.load_train_data("keys_ready.data-train.dat");
-		fm.load_test_data("keys_ready.data-test.dat");
+		std::string filename;
+		std::cout << "Input basename file: ";
+		std::cin >> filename;
+		fm.load_train_data(filename+"_proper.data-train.dat");
+		fm.load_test_data(filename+"_proper.data-test.dat");
 		//fm.optimumAlgorithm();
 		//fm.optimumActivations();
 		//fm.optimumAlgorithm();

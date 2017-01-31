@@ -35,8 +35,8 @@ double FannManager::test()
 		return -1;
 	std::cout << std::endl << "Testing network." << std::endl;
 	score = 0.0;
-#pragma omp parallel for num_threads(4)
-	for (int i = 0; i < testData.length_train_data(); ++i)
+
+	for (unsigned int i = 0; i < testData.length_train_data(); ++i)
 	{
 		// Run the network on the test data
 		fann_type *calc_out = net.run(testData.get_input()[i]);
@@ -149,7 +149,7 @@ void FannManager::save(std::string str)
 
 int print_callback(FANN::neural_net &net, FANN::training_data &train,
 	unsigned int max_epochs, unsigned int epochs_between_reports,
-	float desired_error, unsigned int epochs, void *user_data)
+	double desired_error, unsigned int epochs, void *user_data)
 {
 	std::cout << "Epochs     " << std::setw(8) << epochs << ". "
 		<< " Bit fail: " << net.get_bit_fail() <<" Current Error: " << std::left << net.get_MSE() << std::right << std::endl;

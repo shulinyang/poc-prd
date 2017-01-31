@@ -139,7 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DataProcess.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="poc_processing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataProcess.h" />

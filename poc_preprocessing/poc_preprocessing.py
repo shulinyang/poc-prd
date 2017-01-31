@@ -22,11 +22,17 @@ def process(data: list) -> list:
     return new_data
 
 
-def process_interkey(data:list)->list:
+def process_interkey(data: list, threshold: int) -> list:
     new_data = list()
+    composite_key = [160, 161, 162, 163]
     for i in range(1, len(data)):
-        new_data.append([data[i - 1][0] + "-" + data[i][0], int(data[i][1]) - int(data[i - 1][2])])
+        duration = int(data[i][1]) - int(data[i - 1][2])
+        first_vkcode = int(data[i - 1][0])
+        last_vkcode = int(data[i][0])
+        if 1 < duration < threshold and first_vkcode not in composite_key and last_vkcode not in composite_key:
+            new_data.append([data[i - 1][0] + "-" + data[i][0], duration])
     return new_data
+
 
 def writing(filename: str, data: list):
     with open(filename, 'w', encoding='utf-8', newline='') as file:
@@ -35,6 +41,12 @@ def writing(filename: str, data: list):
             csv_writer.writerow(data[i])
 
 
+def meta(basename: str):
+    writing(basename + "_proper.data", process(reading(basename + ".data")))
+    writing(basename + "_inter.data", process_interkey(reading(basename + ".data"), 6000))
+
+
 if __name__ == '__main__':
-    writing("keys_proper.data", process(reading("keys.data")))
+    meta("alexis")
+    meta("nicolas")
     sys.exit(0)

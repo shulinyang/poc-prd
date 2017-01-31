@@ -107,7 +107,7 @@ double FannManagerCascade::examineTrain(FANN::training_algorithm_enum tal, FANN:
 		return trainMSE;
 }
 
-int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
+int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, double desired_error, unsigned int epochs, void *user_data)
 {
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;

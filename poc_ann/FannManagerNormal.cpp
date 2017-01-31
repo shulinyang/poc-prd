@@ -12,7 +12,7 @@ FannManagerNormal::FannManagerNormal()
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 
-	for (int i = 1; i < (num_layers - 2); i++)
+	for (unsigned int i = 1; i < (num_layers - 2); i++)
 		layers[i] = 5;
 	layers[num_layers - 1] = num_output;
 }
@@ -63,7 +63,7 @@ double FannManagerNormal::examineTrain(FANN::training_algorithm_enum tal, FANN::
 		return trainMSE;
 }
 
-int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, float desired_error, unsigned int epochs, void *user_data)
+int logOut(FANN::neural_net &net, FANN::training_data &train, unsigned int max_epochs, unsigned int epochs_between_reports, double desired_error, unsigned int epochs, void *user_data)
 {
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
