@@ -68,8 +68,7 @@ void DataItem::Scale( double iminv,double imaxv )
 void DataItem::Scale()
 {
 	if(!scale) return;
-	unsigned long i=0;
-	for(i=0;i<data.size(); i++)
+	for(unsigned long i=0;i<data.size(); i++)
 	{
 		data[i]= (((maxv-minv)*(data[i]-min))/(max-min))+minv;
 	}
@@ -155,7 +154,6 @@ DataItem* DataProcess::GetItem(int i)
 bool DataProcess::WriteScaleParameters(char *FileName)
 {
 	ofstream out;
-	string s;
 	string fname=FileName;
 	fname+="-scale.txt";
 	out.open(fname.c_str(),std::ios::out);

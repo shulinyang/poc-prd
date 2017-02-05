@@ -3,7 +3,7 @@
 
 import csv
 import sys
-
+from dataProcess import DataProcess
 
 def reading(filename: str) -> list:
     with open(filename, 'r', encoding='utf-8') as file:
@@ -30,7 +30,7 @@ def process_interkey(data: list, threshold: int) -> list:
         first_vkcode = int(data[i - 1][0])
         last_vkcode = int(data[i][0])
         if 1 < duration < threshold and first_vkcode not in composite_key and last_vkcode not in composite_key:
-            new_data.append([data[i - 1][0] + "-" + data[i][0], duration])
+            new_data.append([data[i - 1][0] + "0" + data[i][0], duration])
     return new_data
 
 
@@ -44,7 +44,12 @@ def writing(filename: str, data: list):
 def meta(basename: str):
     data = process(reading(basename + ".data"))
     data += process_interkey(reading(basename + ".data"), 5500)
-    writing(basename + "_proper.data", data)
+    dproc = DataProcess()
+    dproc.load_data(data)
+    dproc.scale_all()
+    dproc.shuffle()
+    dproc.write_data(basename + "_proper.data", 1, 0.75)
+    #writing(, data)
 
 
 if __name__ == '__main__':
