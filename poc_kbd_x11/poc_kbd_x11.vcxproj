@@ -75,6 +75,7 @@
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
     <RemoteBuildCommandLine>make debug</RemoteBuildCommandLine>
     <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
+    <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Lib\X11\Xlib\include;$(IncludePath);$(ISenseIncludePath)</IncludePath>
@@ -83,7 +84,7 @@
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
     <RemoteBuildCommandLine>make release</RemoteBuildCommandLine>
     <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
-    <AdditionalSourcesToCopyMapping>Makefile:=Makefile</AdditionalSourcesToCopyMapping>
+    <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="poc_kbd.c" />
