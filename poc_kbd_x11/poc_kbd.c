@@ -12,7 +12,7 @@ int main()
 	printf("Result: %d\n", getenv("DISPLAY"));
 #endif
 
-	Display* d = XOpenDisplay("DISPLAY:0");
+	Display* d = XOpenDisplay(":0");
 	if (d == NULL)
 	{
 		printf("Failed to create context.\n");

@@ -73,17 +73,23 @@
     <SourcePath>C:\Lib\X11\Xlib\src;$(SourcePath)</SourcePath>
     <RemoteLdToolExe>gcc</RemoteLdToolExe>
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
-    <RemoteBuildCommandLine>gcc -ggdb -Wall projects/$(ProjectName)/poc_kbd.c -o projects/$(ProjectName)/bin/$(Platform)/$(Configuration)/$(ProjectName).exe -lX11</RemoteBuildCommandLine>
+    <RemoteBuildCommandLine>make debug</RemoteBuildCommandLine>
+    <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>C:\Lib\X11\Xlib\include;$(IncludePath);$(ISenseIncludePath)</IncludePath>
     <SourcePath>C:\Lib\X11\Xlib\src;$(SourcePath)</SourcePath>
     <RemoteLdToolExe>gcc</RemoteLdToolExe>
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
-    <RemoteBuildCommandLine>gcc projects/$(ProjectName)/poc_kbd.c -o projects/$(ProjectName)/bin/$(Platform)/$(Configuration)/$(ProjectName).exe -lX11 -O2</RemoteBuildCommandLine>
+    <RemoteBuildCommandLine>make release</RemoteBuildCommandLine>
+    <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
+    <AdditionalSourcesToCopyMapping>Makefile:=Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="poc_kbd.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Makefile" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
