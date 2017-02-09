@@ -29,6 +29,14 @@ int main()
 	XGetInputFocus(d, &curFocus, &revert);
 	XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
+	FILE *f = fopen("file.txt", "w");
+	if (f == NULL)
+	{
+		printf("Error opening file!\n");
+		return 1;
+	}
+	
+
 	while (1)
 	{
 		XEvent ev;
@@ -36,30 +44,24 @@ int main()
 		switch (ev.type)
 		{
 		case FocusOut:
-			printf("Focus changed!\n");
-			printf("Old focus is %d\n", (int)curFocus);
 			if (curFocus != root)
 				XSelectInput(d, curFocus, 0);
 			XGetInputFocus(d, &curFocus, &revert);
-			printf("New focus is %d\n", (int)curFocus);
 			if (curFocus == PointerRoot)
 				curFocus = root;
 			XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | FocusChangeMask);
 			break;
 
 		case KeyPress:
-			printf("Got key!\n");
+			
 			len = XLookupString(&ev.xkey, buf, 16, &ks, &comp);
-			if (len > 0 && isprint(buf[0]))
-			{
-				buf[len] = 0;
-				printf("String is: %s\n", buf);
-			}
-			else
-			{
-				printf("Key is: %d\n", (int)ks);
-			}
+			printf("Key: %d, xkey: %d\n", (int)ks, ev.xkey.keycode);
+			fprintf(f, "%d;%d;%d\n", (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
+			break;
+		case KeyRelease:
+			fprintf(f, "%d;%d;%d\n", (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
+			break;
 		}
-
 	}
+	fclose(f);
 }

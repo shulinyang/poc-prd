@@ -1,13 +1,14 @@
 ## Variables ##
 CC=gcc
-CFLAG=-Wall -lX11
+CFLAGS=-Wall
+LDFLAGS=-lX11
 DIR_SOURCE=projects/poc_kbd_x11/
 SOURCE=poc_kbd
 MKDIR_P = mkdir -p
 BIN_RELEASE=bin/x64/Release/
 BIN_DEBUG=bin/x64/Debug/
-RFLAG=-O2 -o $(BIN_RELEASE)$(SOURCE).exe
-DFLAG=-ggdb -Wall -o $(BIN_DEBUG)$(SOURCE).exe
+RFLAG= $(CFLAGS) -O2 -o $(BIN_RELEASE)poc_kbd_x11.exe
+DFLAG= $(CFLAGS) -ggdb -o $(BIN_DEBUG)poc_kbd_x11.exe
 
 ## Set default target ##
 default_target: all
@@ -18,10 +19,10 @@ default_target: all
 all: mkdir release debug
 
 release:
-	$(CC) $(CFLAG) $(RFLAG) $(SOURCE).c
+	$(CC) $(RFLAG) $(SOURCE).c $(LDFLAGS)
 
 debug:
-	$(CC) $(CFLAG) $(DFLAG) $(SOURCE).c
+	$(CC) $(DFLAG) $(SOURCE).c $(LDFLAGS)
 
 mkdir:
 	$(MKDIR_P) $(BIN_RELEASE)

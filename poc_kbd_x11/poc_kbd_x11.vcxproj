@@ -73,8 +73,8 @@
     <SourcePath>C:\Lib\X11\Xlib\src;$(SourcePath)</SourcePath>
     <RemoteLdToolExe>gcc</RemoteLdToolExe>
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
-    <RemoteBuildCommandLine>make debug</RemoteBuildCommandLine>
-    <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
+    <RemoteBuildCommandLine>cd projects/poc_kbd_x11;make debug;cd</RemoteBuildCommandLine>
+    <RemoteCleanCommandLine>cd projects/poc_kbd_x11;make clean;cd</RemoteCleanCommandLine>
     <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -82,8 +82,8 @@
     <SourcePath>C:\Lib\X11\Xlib\src;$(SourcePath)</SourcePath>
     <RemoteLdToolExe>gcc</RemoteLdToolExe>
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
-    <RemoteBuildCommandLine>make release</RemoteBuildCommandLine>
-    <RemoteCleanCommandLine>make clean</RemoteCleanCommandLine>
+    <RemoteBuildCommandLine>cd projects/poc_kbd_x11;make release;cd</RemoteBuildCommandLine>
+    <RemoteCleanCommandLine>cd projects/poc_kbd_x11;make clean;cd</RemoteCleanCommandLine>
     <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
   <ItemGroup>
