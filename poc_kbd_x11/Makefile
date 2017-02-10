@@ -1,14 +1,20 @@
-## Variables ##
+## Executable ##
 CC=gcc
+MKDIR_P = mkdir -p
+
+## Folder ##
+DIR_RELEASE=bin/x64/Release/
+DIR_DEBUG=bin/x64/Debug/
+DIR_SOURCE=projects/poc_kbd_x11/
+
+## Source ##
+SOURCE=poc_kbd.c
+
+## flags ##
 CFLAGS=-Wall
 LDFLAGS=-lX11
-DIR_SOURCE=projects/poc_kbd_x11/
-SOURCE=poc_kbd
-MKDIR_P = mkdir -p
-BIN_RELEASE=bin/x64/Release/
-BIN_DEBUG=bin/x64/Debug/
-RFLAG= $(CFLAGS) -O2 -o $(BIN_RELEASE)poc_kbd_x11.exe
-DFLAG= $(CFLAGS) -ggdb -o $(BIN_DEBUG)poc_kbd_x11.exe
+RFLAG= $(CFLAGS) -O2 -o $(DIR_RELEASE)poc_kbd_x11.exe $(LDFLAGS)
+DFLAG= $(CFLAGS) -ggdb -o $(DIR_DEBUG)poc_kbd_x11.exe $(LDFLAGS)
 
 ## Set default target ##
 default_target: all
@@ -19,14 +25,14 @@ default_target: all
 all: mkdir release debug
 
 release:
-	$(CC) $(RFLAG) $(SOURCE).c $(LDFLAGS)
+	$(CC) $(SOURCE) $(RFLAG)
 
 debug:
-	$(CC) $(DFLAG) $(SOURCE).c $(LDFLAGS)
+	$(CC) $(SOURCE) $(DFLAG)
 
 mkdir:
-	$(MKDIR_P) $(BIN_RELEASE)
-	$(MKDIR_P) $(BIN_DEBUG)
+	$(MKDIR_P) $(DIR_RELEASE)
+	$(MKDIR_P) $(DIR_DEBUG)
 
 clean:
 	rm -r $(DIR_SOURCE)bin/x64/*.exe

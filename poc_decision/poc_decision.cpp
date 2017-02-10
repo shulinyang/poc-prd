@@ -14,9 +14,10 @@ int main()
 	fM.load_test_data(filename+"_proper.data-test.dat");
 	fM.load_network("keys.net");
 	std::ofstream file("scoring.txt", std::ios::app);
+	fM.test();
 	if (file.is_open())
 	{
-		file << fM.test() << std::endl;
+		fM.write_score(file);
 		file.close();
 	}
 

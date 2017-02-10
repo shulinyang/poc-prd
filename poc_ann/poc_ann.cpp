@@ -29,9 +29,10 @@ int main(int argc, char **argv)
 		//fm.optimumAlgorithm();
 		fm.train();
 		std::ofstream file("scoring.txt", std::ios::app);
+		fm.test();
 		if (file.is_open())
 		{
-			file << fm.test() << std::endl;
+			fm.write_score(file);
 			file.close();
 		}
 		fm.save("keys");

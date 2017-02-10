@@ -148,7 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Frappe.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
   <ItemGroup>

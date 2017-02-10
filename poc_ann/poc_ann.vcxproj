@@ -170,7 +170,7 @@
     <ClCompile Include="FannManager.cpp" />
     <ClCompile Include="FannManagerCascade.cpp" />
     <ClCompile Include="FannManagerNormal.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="poc_ann.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FannManager.h" />

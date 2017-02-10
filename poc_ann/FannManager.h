@@ -5,11 +5,20 @@
 #pragma warning(pop)
 #include <vector>
 #include <memory>
+#include <fstream>
 
 #ifdef _DEBUG
 #define DEBUG		// compatibility
 #endif
 
+typedef struct Score Score;
+
+struct Score
+{
+	double mean_error = 0;
+	double max_error = 0;
+	double min_error = 0;
+};
 
 class FannManager
 {
@@ -31,7 +40,7 @@ protected:
 	bool haveTestData;
 	double MinTrainingMSE[4];
 	double MinTestingMSE[4];
-	double score;
+	Score score;
 	std::unique_ptr<unsigned int[]> layers;
 	virtual double examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact) = 0;
 
@@ -44,6 +53,7 @@ public:
 	double test();
 	void save(std::string);
 	virtual void train() = 0;
+	std::ofstream& write_score(std::ofstream& file);
 	void load_train_data(std::string filename);
 	void load_test_data(std::string filename);
 };

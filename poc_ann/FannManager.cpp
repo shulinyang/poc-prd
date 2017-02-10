@@ -7,7 +7,6 @@
 FannManager::FannManager()
 	:desired_error(0.00001), learning_rate(0.7), num_layers(7), num_input(1), num_output(1)
 {
-	score = -1;
 	connection_rate = 1;
 	haveTestData = false;
 	overtraining = false;
@@ -34,7 +33,7 @@ double FannManager::test()
 	if (!haveTestData)
 		return -1;
 	std::cout << std::endl << "Testing network." << std::endl;
-	score = 0.0;
+	score.mean_error = 0.0;
 
 	for (unsigned int i = 0; i < testData.length_train_data(); ++i)
 	{
@@ -46,10 +45,12 @@ double FannManager::test()
 			<< ", should be " << testData.get_output()[i][0] << ", "
 			<< "difference = " << std::noshowpos
 			<< std::abs(*calc_out - testData.get_output()[i][0]) << std::endl;
-		score += abs(*calc_out - testData.get_output()[i][0]);
+		score.max_error = max(score.max_error, std::abs(*calc_out - testData.get_output()[i][0]));
+		score.min_error = min(score.min_error, std::abs(*calc_out - testData.get_output()[i][0]));
+		score.mean_error += abs(*calc_out - testData.get_output()[i][0]);
 	}
-	score /= testData.length_train_data();
-	return score;
+	score.mean_error /= testData.length_train_data();
+	return score.mean_error;
 }
 
 
@@ -116,6 +117,12 @@ void FannManager::optimumActivations() {
 	net.set_activation_function_hidden(bestActivationHidden);
 	net.set_activation_function_output(bestActivationOutput);
 	net.destroy();
+}
+
+std::ofstream & FannManager::write_score(std::ofstream& file)
+{
+	file << std::string("Mean error: ") << score.mean_error << " max error: " << score.max_error << " min error: "<< score.min_error << std::endl;
+	return file;
 }
 
 
