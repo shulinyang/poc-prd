@@ -35,7 +35,7 @@ int main()
 	FILE* fclick = fopen("clicks.csv", "a");
 
 	XGetInputFocus(x11_connection, &current_focus, &revert);
-	XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
+	XSelectInput(x11_connection, current_focus, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
 
 	// Open file
 	if (f == NULL)
@@ -66,15 +66,10 @@ int main()
 		// Event handler
 		switch (ev.type)
 		{
-		case FocusOut:
-			if (current_focus != root)
-				XSelectInput(x11_connection, current_focus, 0);
-			XGetInputFocus(x11_connection, &current_focus, &revert);
-			if (current_focus == PointerRoot)
-				current_focus = root;
+		case FocusOut || FocusIn:
+			current_focus = ev.xfocus.window;
 			XSelectInput(x11_connection, current_focus, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
 			break;
-
 		case KeyPress:
 			XLookupString(&ev.xkey, buf, 16, &ks, &comp);
 			fprintf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);

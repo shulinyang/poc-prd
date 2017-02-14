@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-#define cascade 1
+#define cascade 0
 
 int main(int argc, char **argv)
 {

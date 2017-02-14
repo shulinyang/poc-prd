@@ -9,11 +9,12 @@ FannManagerNormal::FannManagerNormal()
 {
 	max_iterations = 30000;
 	iterations_between_reports = 1000;
+	num_layers = 7;
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 
 	for (unsigned int i = 1; i < (num_layers - 2); i++)
-		layers[i] = 5;
+		layers[i] = 10;
 	layers[num_layers - 1] = num_output;
 }
 

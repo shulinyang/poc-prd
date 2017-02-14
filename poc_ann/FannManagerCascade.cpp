@@ -45,9 +45,7 @@ void FannManagerCascade::set_low_precision()
 	set_cascade_tuning();
 }
 
-FannManagerCascade::~FannManagerCascade()
-{
-}
+FannManagerCascade::~FannManagerCascade(){}
 
 
 void FannManagerCascade::set_cascade_tuning()
