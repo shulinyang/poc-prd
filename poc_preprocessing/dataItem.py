@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-class DataItem():
+"""
+    class DataItem
+    Data storage for FANN neural network
+    Recoding of poc_processing
+"""
+
+
+class DataItem:
     def __init__(self):
         self.scalable = True
         self.min = 0
@@ -13,12 +20,14 @@ class DataItem():
         self.data = list()
 
     def scale(self, minv: float = None, maxv: float = None):
-        def inner_scale(self: DataItem):
-            if not self.scalable:
+        def inner_scale(current_object: DataItem):
+            if not current_object.scalable:
                 return
-            for i in range(len(self.data)):
-                self.data[i] = (((self.maxv - self.minv) * (self.data[i] - self.min)) / (
-                    self.max - self.min)) + self.minv
+            for i in range(len(current_object.data)):
+                current_object.data[i] = (((current_object.maxv - current_object.minv) * (
+                current_object.data[i] - current_object.min)) / (
+                                              current_object.max - current_object.min)) + current_object.minv
+
         if minv is not None:
             self.minv = minv
             self.maxv = maxv
