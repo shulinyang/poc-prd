@@ -61,27 +61,27 @@ int main()
 			XLookupString(&ev.xkey, buf, 16, &ks, &comp);
 			fprintf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
 #ifdef DEBUG
-			printf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
+			printf("%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
 #endif // DEBUG
 			break;
 		case KeyRelease:
 			XLookupString(&ev.xkey, buf, 16, &ks, &comp);
 			fprintf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
 #ifdef DEBUG
-			printf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
+			printf("%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
 #endif // DEBUG
 			break;
 		case ButtonReleaseMask:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #ifdef DEBUG
-			printf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
+			printf("%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #endif // DEBUG
 
 			break;
 		case ButtonPressMask:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #ifdef DEBUG
-			printf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
+			printf("%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #endif // DEBUG
 
 			break;
