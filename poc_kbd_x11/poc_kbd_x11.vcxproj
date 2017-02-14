@@ -86,6 +86,16 @@
     <RemoteCleanCommandLine>cd projects/poc_kbd_x11;make clean;cd</RemoteCleanCommandLine>
     <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <RemoteCleanCommandLine>cd projects/poc_kbd_x11;make clean;cd</RemoteCleanCommandLine>
+    <RemoteBuildCommandLine>cd projects/poc_kbd_x11;make -e ARCH=x86 debug;cd</RemoteBuildCommandLine>
+    <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <RemoteCleanCommandLine>cd projects/poc_kbd_x11;make clean;cd</RemoteCleanCommandLine>
+    <RemoteBuildCommandLine>cd projects/poc_kbd_x11;make -e ARCH=x86 release;cd</RemoteBuildCommandLine>
+    <AdditionalSourcesToCopyMapping>Makefile:=projects/poc_kbd_x11/Makefile</AdditionalSourcesToCopyMapping>
+  </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="poc_kbd.c" />
   </ItemGroup>
