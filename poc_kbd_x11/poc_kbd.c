@@ -51,7 +51,7 @@ int main()
 		XEvent ev;
 		XNextEvent(x11_connection, &ev);
 		XGetInputFocus(x11_connection, &current_focus, &revert);
-		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask);
+		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
 		// Event handler
 		switch (ev.type)
 		{
