@@ -49,11 +49,18 @@ int main()
 	// Set handler
 	XSetErrorHandler(handlerXorg);
 	
+	//XAllowEvents(x11_connection, AsyncBoth, CurrentTime);
+	//XGrabPointer(x11_connection,current_focus, 1, PointerMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+
 	// infinite loop
 	while (1)
 	{
+		if (current_focus != root)
+			XSelectInput(x11_connection, current_focus, 0);
 		XGetInputFocus(x11_connection, &current_focus, &revert);
-		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
+		if (current_focus == PointerRoot)
+			current_focus = root;
+		XSelectInput(x11_connection, current_focus, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
 		XNextEvent(x11_connection, &ev);
 
 		// Event handler
@@ -65,7 +72,7 @@ int main()
 			XGetInputFocus(x11_connection, &current_focus, &revert);
 			if (current_focus == PointerRoot)
 				current_focus = root;
-			XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
+			XSelectInput(x11_connection, current_focus, ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
 			break;
 
 		case KeyPress:
@@ -82,19 +89,17 @@ int main()
 			printf("%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
 #endif // DEBUG
 			break;
-		case ButtonReleaseMask:
+		case ButtonRelease:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #ifdef DEBUG
 			printf("%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #endif // DEBUG
-
 			break;
-		case ButtonPressMask:
+		case ButtonPress:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #ifdef DEBUG
 			printf("%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
 #endif // DEBUG
-
 			break;
 		}
 	}
