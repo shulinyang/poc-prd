@@ -147,11 +147,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Frappe.h" />
+    <ClInclude Include="Keystrokes.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Frappe.cpp" />
+    <ClCompile Include="Keystrokes.cpp" />
     <ClCompile Include="poc_keyboard.cpp" />
     <ClCompile Include="utilities.cpp" />
   </ItemGroup>

@@ -1,13 +1,12 @@
 #include "FannManagerCascade.h"
 #include <iostream>
-static EscapeFMC esc;
+static EscapeFMC esc;	// escape encapsulation for callback
 
-#define DEBUG
 
 FannManagerCascade::FannManagerCascade()
 	:FannManager()
 {
-	cascadeFirst = true;
+	first_cascade = true;
 
 	num_layers = 2;
 	layers = std::make_unique<unsigned int[]>(num_layers);
@@ -18,32 +17,32 @@ FannManagerCascade::FannManagerCascade()
 
 void FannManagerCascade::set_high_precision()
 {
-	MaxCandidateEpoch = 700;
-	MaxOutEpoch = 700;
-	CandidateLimit = 700;
-	CandidateStag = 15;
-	OutputStag = 15;
-	NumCandidateGroups = 4;
-	WeightMultiplier = 0.3;
-	CandidateChange = 0.00005;
-	OutputChange = 0.00005;
-	MaxNeuron = 50;
-	SetCascadeTuning();
+	max_candidate_epoch = 1000;
+	max_out_epoch = 800;
+	candidate_limit = 1000;
+	candidate_stag = 30;
+	output_stag = 30;
+	num_candidate_groups = 6;
+	weight_multiplier = 0.2;
+	candidate_change = 0.001;
+	output_change = 0.001;
+	max_neuron = 100;
+	set_cascade_tuning();
 }
 
 void FannManagerCascade::set_low_precision()
 {
-	MaxCandidateEpoch = 50;
-	MaxOutEpoch = 50;
-	CandidateLimit = 50;
-	CandidateStag = 12;
-	OutputStag = 12;
-	NumCandidateGroups = 2;
-	WeightMultiplier = 0.4;
-	CandidateChange = 0.005;
-	OutputChange = 0.005;
-	MaxNeuron = 18;
-	SetCascadeTuning();
+	max_candidate_epoch = 50;
+	max_out_epoch = 50;
+	candidate_limit = 50;
+	candidate_stag = 12;
+	output_stag = 12;
+	num_candidate_groups = 2;
+	weight_multiplier = 0.4;
+	candidate_change = 0.005;
+	output_change = 0.005;
+	max_neuron = 18;
+	set_cascade_tuning();
 }
 
 FannManagerCascade::~FannManagerCascade()
@@ -51,23 +50,22 @@ FannManagerCascade::~FannManagerCascade()
 }
 
 
-
-void FannManagerCascade::SetCascadeTuning()
+void FannManagerCascade::set_cascade_tuning()
 {
-	net.set_cascade_output_change_fraction(OutputChange);
-	net.set_cascade_output_stagnation_epochs(OutputStag);
-	net.set_cascade_candidate_change_fraction(CandidateChange);
-	net.set_cascade_candidate_stagnation_epochs(CandidateStag);
-	net.set_cascade_weight_multiplier(WeightMultiplier);
-	net.set_cascade_candidate_limit(CandidateLimit);
-	net.set_cascade_max_out_epochs(MaxOutEpoch);
-	net.set_cascade_max_cand_epochs(MaxCandidateEpoch);
-	net.set_cascade_num_candidate_groups(NumCandidateGroups);
+	net.set_cascade_output_change_fraction(output_change);
+	net.set_cascade_output_stagnation_epochs(output_stag);
+	net.set_cascade_candidate_change_fraction(candidate_change);
+	net.set_cascade_candidate_stagnation_epochs(candidate_stag);
+	net.set_cascade_weight_multiplier(weight_multiplier);
+	net.set_cascade_candidate_limit(candidate_limit);
+	net.set_cascade_max_out_epochs(max_out_epoch);
+	net.set_cascade_max_cand_epochs(max_candidate_epoch);
+	net.set_cascade_num_candidate_groups(num_candidate_groups);
 }
 
 void FannManagerCascade::train()
 {
-	if (!haveTestData)
+	if (!has_test_data)
 		return;
 
 	unsigned int neurons_between_reports = 2;
@@ -76,30 +74,27 @@ void FannManagerCascade::train()
 	esc.fM = this;
 	net.set_callback(print_callback, NULL);
 
-	// fann_set_train_error_function(ysa, FANN_ERRORFUNC_LINEAR);
-	//SetFineTuning();
-
-	cascadeFirst = true; // This will be needed in cont mode  in case net has just been loaded from a file
-	net.cascadetrain_on_data(trainData, MaxNeuron, neurons_between_reports, desired_error);
+	first_cascade = true;
+	net.cascadetrain_on_data(train_data, max_neuron, neurons_between_reports, desired_error);
 
 }
 
-double FannManagerCascade::examineTrain(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact)
+double FannManagerCascade::examine_train(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact)
 {
 	net.set_training_algorithm(tal);
 	net.set_activation_function_hidden(hact);
 	net.set_activation_function_output(oact);
 	esc.fM = this;
 	net.set_callback(CascadeLogOut, NULL);
-	net.cascadetrain_on_data(trainData, 8, 2, desired_error);
+	net.cascadetrain_on_data(train_data, 8, 2, desired_error);
 
 	double trainMSE = net.get_MSE();
 	double testMSE = -1;
-	if (haveTestData && overtraining)
+	if (has_test_data && over_training)
 	{
-		net.init_weights(trainData);
+		net.init_weights(train_data);
 		net.reset_MSE();
-		net.test_data(testData);
+		net.test_data(test_data);
 		testMSE = net.get_MSE();
 		return (trainMSE + testMSE) / 2;
 	}
@@ -114,12 +109,12 @@ int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned in
 
 	FannManagerCascade* fM = esc.fM;
 
-	if (fM->haveTestData && fM->overtraining)
+	if (fM->has_test_data && fM->over_training)
 	{
 		net.reset_MSE();
-		net.test_data(fM->testData);
+		net.test_data(fM->test_data);
 		testMSE = net.get_MSE();
-		net.test_data(fM->trainData);
+		net.test_data(fM->train_data);
 		printf("%08d : %.08f       : %.08f       : %d ", epochs, trainMSE, testMSE, net.get_bit_fail());
 	}
 #ifdef DEBUG
@@ -128,41 +123,41 @@ int CascadeLogOut(FANN::neural_net &net, FANN::training_data &train, unsigned in
 #endif // DEBUG
 
 	// Memorizing Begin
-	if (fM->cascadeFirst)
+	if (fM->first_cascade)
 	{
 		for (int i = 0; i<3; i++)
 		{
-			fM->MinTrainingMSE[i] = trainMSE;
-			if (fM->haveTestData && fM->overtraining)
-				fM->MinTestingMSE[i] = testMSE;
+			fM->min_training_MSE[i] = trainMSE;
+			if (fM->has_test_data && fM->over_training)
+				fM->min_testing_MSE[i] = testMSE;
 		}
-		fM->cascadeFirst = false;
+		fM->first_cascade = false;
 	}
 
 	// Latest 
-	fM->MinTrainingMSE[3] = trainMSE;
-	fM->MinTestingMSE[3] = testMSE;
+	fM->min_training_MSE[3] = trainMSE;
+	fM->min_testing_MSE[3] = testMSE;
 
 	// Minimum Training MSE
-	if (fM->MinTrainingMSE[0]> trainMSE)
+	if (fM->min_training_MSE[0]> trainMSE)
 	{
-		fM->MinTrainingMSE[0] = trainMSE;
-		if (fM->haveTestData && fM->overtraining)
-			fM->MinTestingMSE[0] = testMSE;
+		fM->min_training_MSE[0] = trainMSE;
+		if (fM->has_test_data && fM->over_training)
+			fM->min_testing_MSE[0] = testMSE;
 	}
-	if (fM->haveTestData && fM->overtraining)
+	if (fM->has_test_data && fM->over_training)
 	{
 		// Minimum Testing MSE
-		if (fM->MinTestingMSE[1]> testMSE)
+		if (fM->min_testing_MSE[1]> testMSE)
 		{
-			fM->MinTrainingMSE[1] = trainMSE;
-			fM->MinTestingMSE[1] = testMSE;
+			fM->min_training_MSE[1] = trainMSE;
+			fM->min_testing_MSE[1] = testMSE;
 		}
 		// Minimum (Training MSE + Testing MSE )/2 
-		if ((fM->MinTestingMSE[2] + fM->MinTrainingMSE[2])> (trainMSE + testMSE))
+		if ((fM->min_testing_MSE[2] + fM->min_training_MSE[2])> (trainMSE + testMSE))
 		{
-			fM->MinTrainingMSE[2] = trainMSE;
-			fM->MinTestingMSE[2] = testMSE;
+			fM->min_training_MSE[2] = trainMSE;
+			fM->min_testing_MSE[2] = testMSE;
 		}
 	}
 

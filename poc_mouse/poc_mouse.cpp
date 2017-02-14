@@ -17,8 +17,8 @@ MouseEvent mouseClick;
 __declspec(dllexport) LRESULT CALLBACK handlerMouse(int code, WPARAM wp, LPARAM lp)
 {
 	if (code == HC_ACTION && wp != WM_MOUSEMOVE) {
-		mouseClick.setEvent(wp, lp);
-		mouseClick.writeData();
+		mouseClick.set_event(wp, lp);
+		mouseClick.write_data();
 	}
 	
 	return CallNextHookEx(mouseHook, code, wp, lp);
@@ -50,10 +50,13 @@ int main()
 	if (hModule != nullptr)
 	{
 
-		std::cout << "Ok, let's work !" << std::endl;
+		std::cout << "POC Mouse\n" << "Cette application intercepte les messages Windows \n";
+		std::cout << "emis lors de la munipulation de la souris. \nA partir de ces messages, l'application recuppere le code evenement";
+		std::cout << " et son timestamp.\n Elle stocke les donnees dans un fichier. Ces informations seront pseudo-anonymees." << std::endl;
 		MSG msg;
 		running = true;
-		while (running) {
+		while (running)
+		{
 			/*
 			* Get messages, dispatch to window procedure
 			*/

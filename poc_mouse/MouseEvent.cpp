@@ -8,27 +8,27 @@ MouseEvent::~MouseEvent()
 	file.close();
 }
 
-void MouseEvent::setEvent(WPARAM & wp, LPARAM & lp)
+void MouseEvent::set_event(WPARAM & wp, LPARAM & lp)
 {
-	currentEvent.typeEvent = wp;
+	current_event.type_event = wp;
 	MSLLHOOKSTRUCT* st_hook = (MSLLHOOKSTRUCT*)lp;
-	currentEvent.typeClick = st_hook->mouseData;
-	currentEvent.key = st_hook->time;
-	currentEvent.flag = st_hook->flags;
-	currentEvent.pt = st_hook->pt;
+	current_event.type_click = st_hook->mouseData;
+	current_event.key = st_hook->time;
+	current_event.flag = st_hook->flags;
+	current_event.pt = st_hook->pt;
 }
 
-void MouseEvent::writeData()
+void MouseEvent::write_data()
 {
 
 #ifdef DEBUG
-	std::cout << currentEvent.typeEvent << ";" << currentEvent.typeClick << ";" << currentEvent.key
-		<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";" << currentEvent.flag << std::endl;
+	std::cout << current_event.type_event << ";" << current_event.type_click << ";" << current_event.key
+		<< ";" << current_event.pt.x << ";" << current_event.pt.y << ";" << current_event.flag << std::endl;
 #else
 	if (file.is_open())
 	{
-		file << currentEvent.typeEvent << ";" << currentEvent.typeClick << ";" << currentEvent.key
-			<< ";" << currentEvent.pt.x << ";" << currentEvent.pt.y << ";" << currentEvent.flag << std::endl;
+		file << current_event.type_event << ";" << current_event.type_click << ";" << current_event.key
+			<< ";" << current_event.pt.x << ";" << current_event.pt.y << ";" << current_event.flag << std::endl;
 	}
 	else
 		std::cerr << "File Failed to open" << std::endl;

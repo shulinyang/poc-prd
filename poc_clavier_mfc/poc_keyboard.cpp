@@ -1,5 +1,5 @@
 
-#include "Frappe.h"
+#include "Keystrokes.h"
 #include "utilities.h"
 
 #include <windows.h>
@@ -11,7 +11,7 @@
 #define DEBUG
 #endif
 
-HINSTANCE modulehandle;
+HINSTANCE module_handle;
 HHOOK kbdhook;
 bool running = true;
 Keystrokes keystrokes;
@@ -20,14 +20,14 @@ Keystrokes keystrokes;
 __declspec(dllexport) LRESULT CALLBACK handlerKeys(int code, WPARAM wp, LPARAM lp)
 {
 	if (code == HC_ACTION &&  wp == WM_KEYDOWN) {
-		keystrokes.setTSDown(lp);
+		keystrokes.set_timestamp_press(lp);
 	}
 	else if (code == HC_ACTION &&  wp == WM_KEYUP)
 	{
-		keystrokes.setTSUp(lp);
+		keystrokes.set_timestamp_release(lp);
 #ifdef DEBUG
 		processKey(lp);
-		std::cout << " ["<< keystrokes.getLastTimePressed()<<"] \n";
+		std::cout << " ["<< keystrokes.get_last_key_duration()<<"] \n";
 #endif
 	}
 	
@@ -55,7 +55,7 @@ int main()
     int nRetCode = 0;
 
     HMODULE hModule = ::GetModuleHandle(nullptr);
-	kbdhook = SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)handlerKeys, modulehandle, NULL);
+	kbdhook = SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)handlerKeys, module_handle, NULL);
 	
     if (hModule != nullptr)
     {

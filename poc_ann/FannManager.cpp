@@ -2,23 +2,21 @@
 #include <iostream>
 #include <iomanip>
 
-#define DEBUG
 
 FannManager::FannManager()
-	:desired_error(0.00001), learning_rate(0.7), num_layers(7), num_input(1), num_output(1)
+	:desired_error(0.000001), learning_rate(0.7), num_layers(7), num_input(1), num_output(1)
 {
 	connection_rate = 1;
-	haveTestData = false;
-	overtraining = false;
-	bestTrain = FANN::TRAIN_QUICKPROP;
-	bestActivationHidden = FANN::THRESHOLD_SYMMETRIC;
-	bestActivationOutput = FANN::SIGMOID_STEPWISE;
-	net.set_activation_function_hidden(bestActivationHidden);
-	net.set_activation_function_output(bestActivationOutput);
+	has_test_data = false;
+	over_training = false;
+	best_train = FANN::TRAIN_SARPROP;
+	best_activation_hidden = FANN::COS_SYMMETRIC;
+	best_activation_output = FANN::ELLIOT_SYMMETRIC;
+	net.set_activation_function_hidden(best_activation_hidden);
+	net.set_activation_function_output(best_activation_output);
 	net.set_learning_rate(learning_rate);
-	net.set_activation_steepness_hidden(1.0);
-	net.set_activation_steepness_output(1.0);
-
+	net.set_activation_steepness_hidden(0.25);
+	net.set_activation_steepness_output(0.25);
 }
 
 
@@ -30,31 +28,31 @@ FannManager::~FannManager()
 
 double FannManager::test()
 {
-	if (!haveTestData)
+	if (!has_test_data)
 		return -1;
 	std::cout << std::endl << "Testing network." << std::endl;
 	score.mean_error = 0.0;
 
-	for (unsigned int i = 0; i < testData.length_train_data(); ++i)
+	for (unsigned int i = 0; i < test_data.length_train_data(); ++i)
 	{
 		// Run the network on the test data
-		fann_type *calc_out = net.run(testData.get_input()[i]);
+		fann_type *calc_out = net.run(test_data.get_input()[i]);
 
-		std::cout << "XOR test (" << std::showpos << testData.get_input()[i][0] << ", "
-			<< testData.get_input()[i][1] << ") -> " << *calc_out
-			<< ", should be " << testData.get_output()[i][0] << ", "
+		std::cout << "XOR test (" << std::showpos << test_data.get_input()[i][0] << ", "
+			<< test_data.get_input()[i][1] << ") -> " << *calc_out
+			<< ", should be " << test_data.get_output()[i][0] << ", "
 			<< "difference = " << std::noshowpos
-			<< std::abs(*calc_out - testData.get_output()[i][0]) << std::endl;
-		score.max_error = max(score.max_error, std::abs(*calc_out - testData.get_output()[i][0]));
-		score.min_error = min(score.min_error, std::abs(*calc_out - testData.get_output()[i][0]));
-		score.mean_error += abs(*calc_out - testData.get_output()[i][0]);
+			<< std::abs(*calc_out - test_data.get_output()[i][0]) << std::endl;
+		score.max_error = max(score.max_error, std::abs(*calc_out - test_data.get_output()[i][0]));
+		score.min_error = min(score.min_error, std::abs(*calc_out - test_data.get_output()[i][0]));
+		score.mean_error += abs(*calc_out - test_data.get_output()[i][0]);
 	}
-	score.mean_error /= testData.length_train_data();
+	score.mean_error /= test_data.length_train_data();
 	return score.mean_error;
 }
 
 
-void FannManager::optimumAlgorithm()
+void FannManager::find_optimum_algorithm()
 {
 #ifdef DEBUG
 	std::cout << "Finding best training algorithm." << std::endl;
@@ -66,23 +64,23 @@ void FannManager::optimumAlgorithm()
 
 	for (int ta = FANN::TRAIN_RPROP; ta <= FANN::TRAIN_SARPROP; ta++)
 	{
-		net.init_weights(trainData);
-		mse = examineTrain(static_cast<FANN::training_algorithm_enum>(ta), bestActivationHidden, bestActivationOutput);
+		net.init_weights(train_data);
+		mse = examine_train(static_cast<FANN::training_algorithm_enum>(ta), best_activation_hidden, best_activation_output);
 		if (mse<min) {
 			min = mse;
-			bestTrain = static_cast<FANN::training_algorithm_enum>(ta);
+			best_train = static_cast<FANN::training_algorithm_enum>(ta);
 		}
 	}
 #ifdef DEBUG
-	std::cout << "Best training method is " << bestTrain << std::endl;
+	std::cout << "Best training method is " << best_train << std::endl;
 #endif // DEBUG
 
-	net.set_training_algorithm(bestTrain);
+	net.set_training_algorithm(best_train);
 	net.destroy();
 }
 
-void FannManager::optimumActivations() {
-	if (!haveTestData)
+void FannManager::find_optimum_activations() {
+	if (!has_test_data)
 		return;
 #ifdef DEBUG
 	std::cout << "Finding best activation functions." << std::endl;
@@ -95,8 +93,8 @@ void FannManager::optimumActivations() {
 	{
 		for (int j = 2; j<13; j++)
 		{
-			net.init_weights(trainData);
-			mse = examineTrain(bestTrain, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j);
+			net.init_weights(train_data);
+			mse = examine_train(best_train, static_cast<FANN::activation_function_enum>(i), (FANN::activation_function_enum)j);
 #ifdef DEBUG
 			std::cout << static_cast<FANN::activation_function_enum>(i) << " " << (FANN::activation_function_enum)j << " mse: " << mse << std::endl;
 #endif
@@ -104,18 +102,18 @@ void FannManager::optimumActivations() {
 			if (mse<min)
 			{
 				min = mse;
-				bestActivationHidden = static_cast<FANN::activation_function_enum>(i);
-				bestActivationOutput = static_cast<FANN::activation_function_enum>(j);
+				best_activation_hidden = static_cast<FANN::activation_function_enum>(i);
+				best_activation_output = static_cast<FANN::activation_function_enum>(j);
 			}
 		}
 	}
 #ifdef DEBUG
-	std::cout << "Activation function for hidden layer is " << bestActivationHidden << "\n";
-	std::cout << "Activation function for output layer is " << bestActivationOutput << std::endl;
+	std::cout << "Activation function for hidden layer is " << best_activation_hidden << "\n";
+	std::cout << "Activation function for output layer is " << best_activation_output << std::endl;
 #endif // DEBUG
 
-	net.set_activation_function_hidden(bestActivationHidden);
-	net.set_activation_function_output(bestActivationOutput);
+	net.set_activation_function_hidden(best_activation_hidden);
+	net.set_activation_function_output(best_activation_output);
 	net.destroy();
 }
 
@@ -128,14 +126,14 @@ std::ofstream & FannManager::write_score(std::ofstream& file)
 
 void FannManager::load_train_data(std::string filename)
 {
-	if (!trainData.read_train_from_file(filename))
+	if (!train_data.read_train_from_file(filename))
 		std::cerr << "Failed loading train data set." << std::endl;
 }
 
 void FannManager::load_test_data(std::string filename)
 {
-	if (testData.read_train_from_file(filename))
-		haveTestData = true;
+	if (test_data.read_train_from_file(filename))
+		has_test_data = true;
 	else
 		std::cerr << "Failed loading test data set." << std::endl;
 }
@@ -149,7 +147,7 @@ void FannManager::save(std::string str)
 	// Save the network in floating point and fixed point
 	net.save(str+".net");
 	unsigned int decimal_point = net.save_to_fixed(str+"_fixed.net");
-	trainData.save_train_to_fixed(str+"_fixed.data", decimal_point);
+	train_data.save_train_to_fixed(str+"_fixed.data", decimal_point);
 
 }
 

