@@ -55,8 +55,6 @@ int main()
 	// infinite loop
 	while (1)
 	{
-		if (current_focus != root)
-			XSelectInput(x11_connection, current_focus, 0);
 		XGetInputFocus(x11_connection, &current_focus, &revert);
 		if (current_focus == PointerRoot)
 			current_focus = root;
