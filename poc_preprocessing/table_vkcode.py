@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""
+Conversion table hardware keyboard code to vkcode
+Work with azerty keyboard only.
+
+"""
+
 
 def x11_code_to_vkcode() -> dict:
     return {

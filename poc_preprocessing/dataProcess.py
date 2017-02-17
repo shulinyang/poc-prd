@@ -4,7 +4,7 @@
 """
     class DataProcess
     Processing data for FANN neural network
-    Recoding of poc_processing
+    Recoding of poc_data_processing
 """
 
 import random

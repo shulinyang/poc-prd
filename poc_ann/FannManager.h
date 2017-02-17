@@ -23,6 +23,7 @@ struct Score
 	double mean_error = 0;
 	double max_error = 0;
 	double min_error = 1;
+	double MSE = 0;
 };
 
 /*

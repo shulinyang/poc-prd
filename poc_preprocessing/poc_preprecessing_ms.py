@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import csv
-import sys
+"""
+Pre-processing for poc_ann
 
+"""
+
+import sys
+from common_functions import writing, reading
 
 """
 512 = move
@@ -20,16 +24,12 @@ import sys
 """
 
 
-def reading(filename: str) -> list:
-    with open(filename, 'r', encoding='utf-8') as file:
-        csv_reader = csv.reader(file, delimiter=';')
-        data = list()
-        for row in csv_reader:
-            data.append(row)
-        return data
-
-
 def filter(data: list) -> tuple:
+    """Separate clicks and scroll
+    <!> hard code
+    :param data: list like [[event type, ...][event type, ...]]
+    :return: tuple of lists like ([[event type, ...][event type, ...][[event type, ...]]
+    """
     scroll = list()
     click = list()
     for i in range(len(data)):
@@ -44,6 +44,11 @@ def filter(data: list) -> tuple:
 
 
 def processing_click(click:list)->list:
+    """Compute duration of clicks
+    <!> hard code
+    :param click: list like [[event type, , , timestamp]]
+    :return: list like [[event type, duration]]
+    """
     new_click = list()
     stacked = None
     click_down = False
@@ -60,14 +65,13 @@ def processing_click(click:list)->list:
                 click_down = False
     return new_click
 
-def writing(filename: str, data: list):
-    with open(filename, 'w', encoding='utf-8', newline='') as file:
-        csv_writer = csv.writer(file, delimiter=' ')
-        for i in range(len(data)):
-            csv_writer.writerow(data[i])
-
 
 def meta(basename: str):
+    """
+    <!> hard code
+    :param basename: Basename (str)
+    :return: None
+    """
     try:
         _, data = filter(reading(basename+"_clicks.data"))
         writing(basename+"_click_proper.data",processing_click(data))

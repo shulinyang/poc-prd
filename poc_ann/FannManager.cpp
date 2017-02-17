@@ -45,9 +45,12 @@ double FannManager::test()
 			<< std::abs(*calc_out - test_data.get_output()[i][0]) << std::endl;
 		score.max_error = max(score.max_error, std::abs(*calc_out - test_data.get_output()[i][0]));
 		score.min_error = min(score.min_error, std::abs(*calc_out - test_data.get_output()[i][0]));
-		score.mean_error += abs(*calc_out - test_data.get_output()[i][0]);
+		score.mean_error += pow((*calc_out - test_data.get_output()[i][0]),2);
 	}
 	score.mean_error /= test_data.length_train_data();
+	net.reset_MSE();
+	net.test_data(test_data);
+	score.MSE = net.get_MSE();
 	return score.mean_error;
 }
 
@@ -119,7 +122,7 @@ void FannManager::find_optimum_activations() {
 
 std::ofstream & FannManager::write_score(std::ofstream& file)
 {
-	file << std::string("Mean error: ") << score.mean_error << " max error: " << score.max_error << " min error: "<< score.min_error << std::endl;
+	file << std::string("Mean error: ") << score.mean_error << " max error: " << score.max_error << " min error: "<< score.min_error << " MSE: "<< score.MSE << std::endl;
 	return file;
 }
 
