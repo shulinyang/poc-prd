@@ -7,6 +7,7 @@ Pre-processing for poc_ann
 """
 
 import sys
+
 from common_functions import writing, reading
 
 """
@@ -43,7 +44,7 @@ def filter(data: list) -> tuple:
     return scroll, click
 
 
-def processing_click(click:list)->list:
+def processing_click(click: list) -> list:
     """Compute duration of clicks
     <!> hard code
     :param click: list like [[event type, , , timestamp]]
@@ -73,11 +74,12 @@ def meta(basename: str):
     :return: None
     """
     try:
-        _, data = filter(reading(basename+"_clicks.data"))
-        writing(basename+"_click_proper.data",processing_click(data))
+        _, data = filter(reading(basename + "_clicks.data"))
+        writing(basename + "_click_proper.data", processing_click(data))
     except Exception as e:
         print("Something wrong happened.\n")
         print(e.args)
+
 
 if __name__ == '__main__':
     meta("alexis")
