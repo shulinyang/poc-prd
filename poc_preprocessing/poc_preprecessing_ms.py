@@ -11,6 +11,7 @@ import sys
 from common_functions import writing, reading
 
 """
+On MS Windows
 512 = move
 513 = left click down
 514 = left click up
