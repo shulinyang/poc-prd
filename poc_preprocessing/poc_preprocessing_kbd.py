@@ -10,7 +10,7 @@ import csv
 import sys
 
 from common_functions import reading
-from dataProcess import DataProcess
+from dataSorting import DataSorting
 from table_vkcode import x11_code_to_vkcode
 
 
@@ -50,15 +50,16 @@ def preprocess(data: list) -> list:
     return new_data
 
 
-def process(data: list) -> list:
+def process(data: list, threshold: int = 3000) -> list:
     """Compute duration between pressed timestamp and release timestamp
     <!> hard code
     :param data: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
+    :param threshold: timeout
     :return: list like [[vkcode, duration][vkcode, duration]]
     """
     new_data = list()
     for i in range(len(data)):
-        if (int(data[i][2]) - int(data[i][1])) > 16:
+        if threshold > (int(data[i][2]) - int(data[i][1])) > 16:
             new_data.append([data[i][0], int(data[i][2]) - int(data[i][1])])
     return new_data
 
@@ -80,7 +81,7 @@ def process_interkey(data: list, threshold: int = 2000) -> list:
     return new_data
 
 
-def prepare_x11(basename):
+def prepare_x11(basename) -> None:
     """Function to process data from X11 agent
     <!> hard code
     :param basename: basename file (filename must be like "basename"x11.data
@@ -93,38 +94,20 @@ def prepare_x11(basename):
             csv_writer.writerow(local_data[i])
 
 
-def meta(list_basename: list):
+def meta(list_basename: list) -> None:
     """Function to process data (all agents)
     <!> hard code
     :param list_basename: list like [basename1, basename2]
     :return: None
     """
-    data = list()
-    dproc = list()
+    data = list()  # type: list
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
         data.append(process(local_data))
         data[i] += process_interkey(local_data, 2000)   # <!> hard coded
-        dproc.append(DataProcess())
-        dproc[i].load_data(data[i])
-    max_value = list()
-    min_value = list()
-    for i in range(len(dproc)):
-        for j in range(len(dproc[i].items)):
-            if i == 0:
-                max_value.append(dproc[i].items[j].max)
-                min_value.append(dproc[i].items[j].min)
-            max_value[j] = max(max_value[j], dproc[i].items[j].max)
-            min_value[j] = min(min_value[j], dproc[i].items[j].min)
-
-    for i in range(len(list_basename)):
-        for j in range(len(dproc[i].items)):
-            dproc[i].items[j].max = max_value[j]
-            dproc[i].items[j].min = min_value[j]
-        dproc[i].scale_all()
-        dproc[i].shuffle()
-        dproc[i].write_data(list_basename[i] + "_proper.data", 1, 0.75)  # <!> hard coded
-
+        datSorting = DataSorting(data)
+        datSorting.sort()
+        datSorting.export_csv(list_basename[i])
 
 if __name__ == '__main__':
     prepare_x11("remi")
