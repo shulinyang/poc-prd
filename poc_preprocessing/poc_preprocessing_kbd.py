@@ -8,13 +8,14 @@ Replace poc_data_processing
 
 import csv
 import sys
+from typing import List
 
 from common_functions import reading
 from dataSorting import DataSorting
 from table_vkcode import x11_code_to_vkcode
 
 
-def convert_to_vkcode(data: list) -> list:
+def convert_to_vkcode(data: List[List]) -> List[List]:
     """Convert hardware code to vkCode, only for X11 agent
     <!> hard code
     :param data: list like [[event type, code1, code2, timestamp], [et, c1, c2, t1]]
@@ -26,7 +27,7 @@ def convert_to_vkcode(data: list) -> list:
     return new_data
 
 
-def preprocess(data: list) -> list:
+def preprocess(data: List[List]) -> List[List]:
     """Compress data, only for X11 agent
     <!> hard code
     :param data: list like [[type, vkcode, timestamp][type, vkcode, timestamp]]
@@ -50,7 +51,7 @@ def preprocess(data: list) -> list:
     return new_data
 
 
-def process(data: list, threshold: int = 3000) -> list:
+def process(data: List[List], threshold: int = 3000) -> List[List]:
     """Compute duration between pressed timestamp and release timestamp
     <!> hard code
     :param data: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
@@ -64,7 +65,7 @@ def process(data: list, threshold: int = 3000) -> list:
     return new_data
 
 
-def process_interkey(data: list, threshold: int = 8000) -> list:
+def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
     """Compute duration between two keys
     <!> hard code
     :param data: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
@@ -106,14 +107,10 @@ def meta(list_basename: list) -> None:
     :param list_basename: list like [basename1, basename2]
     :return: None
     """
-    data = list()  # type: list
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
-        data.append(process(local_data))
-        data[i] += process_interkey(local_data, 2000)  # <!> hard coded
-        datSorting = DataSorting(data)
-        datSorting.sort()
-        datSorting.export_csv(list_basename[i])
+        DataSorting(process(local_data)).sort().load_data(process_interkey(local_data, 2000)).sort().export_csv(
+            list_basename[i])
 
 
 if __name__ == '__main__':
