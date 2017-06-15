@@ -64,20 +64,26 @@ def process(data: list, threshold: int = 3000) -> list:
     return new_data
 
 
-def process_interkey(data: list, threshold: int = 2000) -> list:
+def process_interkey(data: list, threshold: int = 8000) -> list:
     """Compute duration between two keys
     <!> hard code
     :param data: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
     :param threshold: timeout between two keys in ms (default: 2000)
     :return: list like [[vkcode0vkcode, duration],[vkcode0vkcode, duration]]
     """
+
+    def format_interkey_name(string: str) -> str:
+        if int(string) < 100:
+            return "0" + string
+        return string
+
     new_data = list()
     composite_key = [160, 161, 162, 163]
     for i in range(1, len(data)):
         duration = int(data[i][1]) - int(data[i - 1][2])
         last_vkcode = int(data[i][0])
         if 1 < duration < threshold and last_vkcode not in composite_key:
-            new_data.append([data[i - 1][0] + "0" + data[i][0], duration])
+            new_data.append([format_interkey_name(data[i - 1][0]) + format_interkey_name(data[i][0]), duration])
     return new_data
 
 
@@ -104,10 +110,11 @@ def meta(list_basename: list) -> None:
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
         data.append(process(local_data))
-        data[i] += process_interkey(local_data, 2000)   # <!> hard coded
+        data[i] += process_interkey(local_data, 2000)  # <!> hard coded
         datSorting = DataSorting(data)
         datSorting.sort()
         datSorting.export_csv(list_basename[i])
+
 
 if __name__ == '__main__':
     prepare_x11("remi")
