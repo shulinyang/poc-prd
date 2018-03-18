@@ -22,7 +22,7 @@
     <ProjectGuid>{C1D07B46-AFAC-46B6-8F82-CC90F5F3EFCB}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>poc_decision</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -133,16 +133,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FANN_DLL_EXPORTS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Lib\FANN\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Dreamsick\Source\Repos\fann\src\include\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\Dreamsick\Source\Repos\fann\bin\x64\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\doublefann.c" />
+    <ClCompile Include="..\..\fann\src\doublefann.c" />
     <ClCompile Include="..\poc_ann\FannManager.cpp" />
     <ClCompile Include="..\poc_ann\FannManagerCascade.cpp" />
     <ClCompile Include="poc_decision.cpp" />

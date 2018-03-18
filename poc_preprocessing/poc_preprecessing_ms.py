@@ -75,7 +75,7 @@ def meta(basename: str):
     :return: None
     """
     try:
-        _, data = filter(reading(basename + "_clicks.data"))
+        _, data = filter(reading(basename + "_clicks.csv"))
         writing(basename + "_click_proper.data", processing_click(data))
     except Exception as e:
         print("Something wrong happened.\n")

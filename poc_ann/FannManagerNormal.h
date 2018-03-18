@@ -24,6 +24,7 @@ public:
 	
 	// Training function
 	void train();
+	void parallel_train();
 
 	// Callback
 	friend int logOut(FANN::neural_net&, FANN::training_data&, unsigned int, unsigned int, double, unsigned int, void*);

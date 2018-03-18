@@ -102,7 +102,7 @@ def meta(list_basename: list):
     data = list()
     dproc = list()
     for i in range(len(list_basename)):
-        local_data = reading(list_basename[i] + ".data")
+        local_data = reading(list_basename[i] + ".csv")
         data.append(process(local_data))
         data[i] += process_interkey(local_data, 2000)   # <!> hard coded
         dproc.append(DataProcess())
@@ -127,6 +127,6 @@ def meta(list_basename: list):
 
 
 if __name__ == '__main__':
-    prepare_x11("remi")
-    meta(["alexis", "nicolas", "remi"])  # <!> hard coded
+    #prepare_x11("remi")
+    meta(["alexis"])  # <!> hard coded
     sys.exit(0)
