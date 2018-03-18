@@ -19,9 +19,9 @@ class DataProcess:
     """
 
     def __init__(self):
-        self.items = list()
-        self.n_item = 0  # number of input / output
-        self.n_data = 0  # number of samples
+        self.items = list()  # type: list
+        self.n_item = 0  # type: int
+        self.n_data = 0  # type: int
 
     def scale_all(self):
         """Scale all values

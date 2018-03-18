@@ -15,13 +15,13 @@ class DataItem:
     """
     def __init__(self):
         self.scalable = True
-        self.min = 0
-        self.max = 0
-        self.minv = 0
-        self.maxv = 1
-        self.sum = 0
-        self.avg = 0
-        self.data = list()
+        self.min = 0  # type: float
+        self.max = 0  # type: float
+        self.minv = 0  # type: int
+        self.maxv = 1  # type: int
+        self.sum = 0  # type: float
+        self.avg = 0  # type: float
+        self.data = list()  # type: list
 
     def scale(self, minv: float = None, maxv: float = None):
         """Scaling data
