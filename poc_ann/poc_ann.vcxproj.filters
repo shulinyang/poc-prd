@@ -24,14 +24,14 @@
     <ClCompile Include="FannManagerCascade.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\doublefann.c">
-      <Filter>Lib</Filter>
-    </ClCompile>
     <ClCompile Include="FannManagerNormal.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="poc_ann.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\fann\src\doublefann.c">
+      <Filter>Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@
     <ClCompile Include="..\poc_ann\FannManagerCascade.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\Lib\FANN\src\doublefann.c">
+    <ClCompile Include="..\..\fann\src\doublefann.c">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
-Keystrokes::Keystrokes():file("keys.data", std::ios::app){}
+Keystrokes::Keystrokes():file("keys.csv", std::ios::app){}
 
 Keystrokes::~Keystrokes()
 {

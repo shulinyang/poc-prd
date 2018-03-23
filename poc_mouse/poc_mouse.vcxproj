@@ -22,7 +22,7 @@
     <ProjectGuid>{42B3E227-4850-4FB7-A199-A720C4541A33}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>poc_mouse</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

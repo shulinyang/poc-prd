@@ -22,7 +22,7 @@
     <ProjectGuid>{A785C19E-3558-468B-86B1-0F51113E04DF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>poc_clavier_mfc</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <ProjectName>poc_keyboard</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

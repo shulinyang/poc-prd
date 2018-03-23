@@ -1,7 +1,7 @@
 #include "MouseEvent.h"
 #include <iostream>
 
-MouseEvent::MouseEvent():file("clicks.data", std::ios::app){}
+MouseEvent::MouseEvent():file("clicks.csv", std::ios::app){}
 
 MouseEvent::~MouseEvent()
 {

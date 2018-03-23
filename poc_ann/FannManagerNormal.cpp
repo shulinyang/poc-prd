@@ -1,6 +1,8 @@
 #include "FannManagerNormal.h"
+#include "parallel_fann.h"
 #include <iostream>
 #include <iomanip>
+#include <thread>
 
 static EscapeFM esc;	// escape encapsulation for callback
 
@@ -9,12 +11,12 @@ FannManagerNormal::FannManagerNormal()
 {
 	max_iterations = 30000;
 	iterations_between_reports = 1000;
-	num_layers = 7;
+	num_layers = 10;
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 
 	for (unsigned int i = 1; i < (num_layers - 2); i++)
-		layers[i] = 10;
+		layers[i] = 32;
 	layers[num_layers - 1] = num_output;
 }
 
@@ -36,9 +38,25 @@ void FannManagerNormal::train()
 	net.set_callback(print_callback, NULL);
 	net.train_on_data(train_data, max_iterations, iterations_between_reports, desired_error);
 
+}
 
-	net.train_on_data(train_data, max_iterations,
-		iterations_between_reports, desired_error);
+void FannManagerNormal::parallel_train()
+{
+	unsigned int num_threads = (std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() : 1);
+	long before;
+	double error;
+	unsigned int i;
+
+	net.create_shortcut_array(num_layers, layers.get());
+	net.init_weights(train_data);
+	before = GetTickCount();
+	for (i = 1; i <= max_iterations; i++)
+	{
+		error = num_threads > 1 ? fann_train_epoch_irpropm_parallel(net.get_ann(), train_data.get_train_data(), num_threads) : fann_train_epoch(net.get_ann(), train_data.get_train_data());
+		printf("Epochs     %8d. Current error: %.10f\n", i, error);
+	}
+	printf("ticks %d", GetTickCount() - before);
+
 }
 
 double FannManagerNormal::examine_train(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact)
