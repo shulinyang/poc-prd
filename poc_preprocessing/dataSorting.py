@@ -32,6 +32,8 @@ class DataSorting():
         with open(filename + "-sorted.csv", "w", encoding='utf8', newline='') as csv_file:
             csv_writer = csv.writer(csv_file, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL,
                                     dialect='excel')
-            for key in self.sorted_data.keys():
-                csv_writer.writerow([key] + self.sorted_data[key])
+            # for key in self.sorted_data.keys():
+            #    csv_writer.writerow([key] + self.sorted_data[key])
+            for key in self.data:
+                csv_writer.writerow(key)
         print(filename + " as been exported.")

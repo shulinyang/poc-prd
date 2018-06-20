@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 
-#define cascade 0
+#define cascade 1
 
 int main(int argc, char **argv)
 {
@@ -27,7 +27,8 @@ int main(int argc, char **argv)
 		//fm.optimumAlgorithm();
 		//fm.optimumActivations();
 		//fm.optimumAlgorithm();
-		fm.parallel_train();
+		//fm.parallel_train();
+		fm.train();
 		std::ofstream file("scoring.txt", std::ios::app);
 		fm.test();
 		if (file.is_open())

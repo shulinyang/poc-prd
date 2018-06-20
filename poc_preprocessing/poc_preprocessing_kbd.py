@@ -61,8 +61,12 @@ def process(data: List[List], threshold: int = 3000) -> List[List]:
     new_data = list()
     for i in range(len(data)):
         if threshold > (int(data[i][2]) - int(data[i][1])) > 16:
-            new_data.append([data[i][0], int(data[i][2]) - int(data[i][1])])
+            new_data.append(categorical_effect(data[i][0]) + [(float(data[i][2]) - float(data[i][1])) / threshold])
     return new_data
+
+
+def categorical_effect(number: str):
+    return [0] * (int(number) - 1) + [1] + [0] * (200 - 1 - int(number))
 
 
 def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
@@ -109,8 +113,9 @@ def meta(list_basename: list) -> None:
     """
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
-        DataSorting(process(local_data)).sort().load_data(process_interkey(local_data, 2000)).sort().export_csv(
-            list_basename[i])
+        DataSorting(process(local_data)).export_csv(
+            list_basename[i])  # .load_data(process_interkey(local_data)).sort().export_csv(
+
 
 
 if __name__ == '__main__':

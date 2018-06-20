@@ -9,14 +9,14 @@ static EscapeFM esc;	// escape encapsulation for callback
 FannManagerNormal::FannManagerNormal()
 	:FannManager()
 {
-	max_iterations = 30000;
-	iterations_between_reports = 1000;
-	num_layers = 10;
+	max_iterations = 3000;
+	iterations_between_reports = 100;
+	num_layers = 8;
 	layers = std::make_unique<unsigned int[]>(num_layers);
 	layers[0] = num_input;
 
 	for (unsigned int i = 1; i < (num_layers - 2); i++)
-		layers[i] = 32;
+		layers[i] = 24;
 	layers[num_layers - 1] = num_output;
 }
 
@@ -43,16 +43,18 @@ void FannManagerNormal::train()
 void FannManagerNormal::parallel_train()
 {
 	unsigned int num_threads = (std::thread::hardware_concurrency() > 0 ? std::thread::hardware_concurrency() : 1);
+	num_threads = 4;
 	long before;
 	double error;
 	unsigned int i;
 
 	net.create_shortcut_array(num_layers, layers.get());
 	net.init_weights(train_data);
+	net.set_callback(print_callback, NULL);
 	before = GetTickCount();
 	for (i = 1; i <= max_iterations; i++)
 	{
-		error = num_threads > 1 ? fann_train_epoch_irpropm_parallel(net.get_ann(), train_data.get_train_data(), num_threads) : fann_train_epoch(net.get_ann(), train_data.get_train_data());
+		error = num_threads > 1 ? fann_train_epoch_sarprop_parallel(net.get_ann(), train_data.get_train_data(), num_threads) : fann_train_epoch(net.get_ann(), train_data.get_train_data());
 		printf("Epochs     %8d. Current error: %.10f\n", i, error);
 	}
 	printf("ticks %d", GetTickCount() - before);

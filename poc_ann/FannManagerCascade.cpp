@@ -17,16 +17,16 @@ FannManagerCascade::FannManagerCascade()
 
 void FannManagerCascade::set_high_precision()
 {
-	max_candidate_epoch = 1000;
-	max_out_epoch = 800;
-	candidate_limit = 1000;
+	max_candidate_epoch = 700;
+	max_out_epoch = 500;
+	candidate_limit = 700;
 	candidate_stag = 30;
 	output_stag = 30;
 	num_candidate_groups = 6;
 	weight_multiplier = 0.2;
 	candidate_change = 0.001;
 	output_change = 0.001;
-	max_neuron = 100;
+	max_neuron = 130;
 	set_cascade_tuning();
 }
 
@@ -67,14 +67,13 @@ void FannManagerCascade::train()
 		return;
 
 	unsigned int neurons_between_reports = 2;
-	set_high_precision();
+	//set_high_precision();
 	net.create_shortcut(2, num_input, num_output);
 	esc.fM = this;
 	net.set_callback(print_callback, NULL);
 
 	first_cascade = true;
 	net.cascadetrain_on_data(train_data, max_neuron, neurons_between_reports, desired_error);
-
 }
 
 double FannManagerCascade::examine_train(FANN::training_algorithm_enum tal, FANN::activation_function_enum hact, FANN::activation_function_enum oact)
