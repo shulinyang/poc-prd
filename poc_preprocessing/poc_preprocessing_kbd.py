@@ -12,6 +12,7 @@ from typing import List
 
 from common_functions import reading
 from dataSorting import DataSorting
+from mapper import Mapper
 from table_vkcode import x11_code_to_vkcode
 
 
@@ -51,7 +52,7 @@ def preprocess(data: List[List]) -> List[List]:
     return new_data
 
 
-def process(data: List[List], threshold: int = 3000) -> List[List]:
+def process(data: List[List], user_id: int, threshold: int = 3000) -> List[List]:
     """Compute duration between pressed timestamp and release timestamp
     <!> hard code
     :param data: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
@@ -61,12 +62,13 @@ def process(data: List[List], threshold: int = 3000) -> List[List]:
     new_data = list()
     for i in range(len(data)):
         if threshold > (int(data[i][2]) - int(data[i][1])) > 16:
-            new_data.append(categorical_effect(data[i][0]) + [(float(data[i][2]) - float(data[i][1])) / threshold])
+            new_data.append(
+                categorical_effect(data[i][0]) + [(float(data[i][2]) - float(data[i][1])) / threshold] + [user_id])
     return new_data
 
 
-def categorical_effect(number: str):
-    return [0] * (int(number) - 1) + [1] + [0] * (200 - 1 - int(number))
+def categorical_effect(number: str) -> List[int]:
+    return Mapper.vkcode[number]
 
 
 def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
@@ -105,20 +107,26 @@ def prepare_x11(basename) -> None:
             csv_writer.writerow(local_data[i])
 
 
-def meta(list_basename: list) -> None:
+def meta(list_basename: list, user_id: List[int]) -> None:
     """Function to process data (all agents)
     <!> hard code
     :param list_basename: list like [basename1, basename2]
     :return: None
     """
+    meta_prepare_mapper(list_basename)
+    Mapper.generate_vector()
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
-        DataSorting(process(local_data)).export_csv(
-            list_basename[i])  # .load_data(process_interkey(local_data)).sort().export_csv(
+        DataSorting(process(local_data, user_id[i])).export_csv(list_basename[i])
 
 
+def meta_prepare_mapper(list_basename: list):
+    for i in range(len(list_basename)):
+        local_data = reading(list_basename[i] + ".data")
+        for j in range(len(local_data)):
+            Mapper.add_vkcode(local_data[j][0])
 
 if __name__ == '__main__':
     prepare_x11("remi")
-    meta(["alexis", "nicolas", "remi"])  # <!> hard coded
+    meta(["alexis", "nicolas", "remi"], [0, 1, 2])  # <!> hard coded
     sys.exit(0)
