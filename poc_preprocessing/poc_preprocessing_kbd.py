@@ -70,7 +70,6 @@ def process(data: List[List], user_id: int, threshold: int = 3000) -> List[List]
 def categorical_effect(number: str) -> List[int]:
     return Mapper.vkcode[number]
 
-
 def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
     """Compute duration between two keys
     <!> hard code
@@ -94,6 +93,16 @@ def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
     return new_data
 
 
+def reformatting_inter_keys(local_data: List[List], user_id: int):
+    for i in range(len(local_data)):
+        vkcode = str(local_data[i].pop(0))
+        revered_list = reversed(Mapper.vkcode[vkcode])
+        for elem in revered_list:
+            local_data[i].insert(0, elem)
+        local_data[i].append(user_id)
+
+    return local_data
+
 def prepare_x11(basename) -> None:
     """Function to process data from X11 agent
     <!> hard code
@@ -113,18 +122,32 @@ def meta(list_basename: list, user_id: List[int]) -> None:
     :param list_basename: list like [basename1, basename2]
     :return: None
     """
-    meta_prepare_mapper(list_basename)
+    meta_prepare_mapper(list_basename, False)
     Mapper.generate_vector()
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
         DataSorting(process(local_data, user_id[i])).export_csv(list_basename[i])
 
 
-def meta_prepare_mapper(list_basename: list):
+def meta_inter_key(list_basename: list, user_id: List[int]) -> None:
+    meta_prepare_mapper(list_basename, True)
+    Mapper.generate_vector()
     for i in range(len(list_basename)):
         local_data = reading(list_basename[i] + ".data")
-        for j in range(len(local_data)):
-            Mapper.add_vkcode(local_data[j][0])
+        DataSorting(reformatting_inter_keys(process_interkey(local_data), user_id[i])).export_csv(
+            list_basename[i] + "-inter")
+
+
+def meta_prepare_mapper(list_basename: list, inter_key: bool):
+    for i in range(len(list_basename)):
+        local_data = reading(list_basename[i] + ".data")
+        if not inter_key:
+            for j in range(len(local_data)):
+                Mapper.add_vkcode(local_data[j][0])
+        else:
+            for elem in process_interkey(local_data):
+                Mapper.add_vkcode(elem[0])
+
 
 if __name__ == '__main__':
     prepare_x11("remi")

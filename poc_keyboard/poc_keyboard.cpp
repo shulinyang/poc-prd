@@ -81,7 +81,7 @@ int main()
     else
     {
         // TODO: modifiez le code d'erreur selon les besoins
-        wprintf(L"Erreur irrécupérable : échec de GetModuleHandle\n");
+        wprintf(L"Erreur irrÃ©cupÃ©rable : Ã©chec de GetModuleHandle\n");
         nRetCode = 1;
     }
 
