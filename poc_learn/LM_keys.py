@@ -7,6 +7,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import zero_one_loss, mean_squared_error
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -24,14 +25,16 @@ def reading(filename: str) -> List[List[str]]:
         return data
 
 
-def string2number(local_data: List[List[str]]) -> List[List]:
+def string2number(local_data: List[List[str]]) -> Tuple[List[List], int]:
+    float_position = -1
     for i in range(len(local_data)):
         for j in range(len(local_data[i])):
             try:
                 local_data[i][j] = int(local_data[i][j])
             except ValueError:
                 local_data[i][j] = float(local_data[i][j])
-    return local_data
+                float_position = j
+    return local_data, float_position
 
 
 def split_last_column(local_data: List[List]) -> Tuple[np.ndarray, np.ndarray]:
@@ -43,9 +46,11 @@ def split_last_column(local_data: List[List]) -> Tuple[np.ndarray, np.ndarray]:
     return np.asarray(X), np.asarray(y)
 
 
-X, y = split_last_column(string2number(reading("alexis-remi.csv")))
+data, float_pos = string2number(reading("alexis-nicolas.csv"))
+X, y = split_last_column(data)
 
-bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=10), algorithm="SAMME", n_estimators=5000)
+bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=10), algorithm="SAMME", n_estimators=2000, learning_rate=0.8)
+
 bdt.fit(X, y)
 plot_colors = "br"
 plot_step = 0.005
@@ -61,9 +66,9 @@ y_min, y_max = y[:].min() - 0.25, y[:].max() + 0.25
 xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                      np.arange(y_min, y_max, plot_step))
 
-my_vector = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+my_vector = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-             0, 0, 0, 0]
+             0, 0, 0, 0, 0, 0, 0, 0]
 my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
 my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
 
@@ -76,7 +81,7 @@ plt.axis("tight")
 for i, n, c in zip(range(2), class_names, plot_colors):
     idx = np.where(y == i)
 
-    plt.scatter(X[idx, 76], y[idx],
+    plt.scatter(X[idx, float_pos], y[idx],
                 c=c, cmap=plt.cm.Paired,
                 s=20, edgecolor='k',
                 label="Class %s" % n)
@@ -108,4 +113,32 @@ plt.title('Decision Scores')
 
 plt.tight_layout()
 plt.subplots_adjust(wspace=0.35)
+plt.show()
+
+ada_discrete_err_train = np.zeros((2000,))
+for i, y_pred in enumerate(bdt.staged_predict(X)):
+    ada_discrete_err_train[i] = zero_one_loss(y, y_pred)
+
+ada_discrete_err_train_hinge = np.zeros((2000,))
+for i, y_pred in enumerate(bdt.staged_predict(X)):
+    ada_discrete_err_train_hinge[i] = mean_squared_error(y, y_pred)
+fig = plt.figure(2)
+ax = fig.add_subplot(111)
+
+ax.plot(np.arange(2000) + 1, ada_discrete_err_train_hinge,
+        label='AdaBoost Train Error MSE',
+        color='red')
+
+ax.plot(np.arange(2000) + 1, ada_discrete_err_train,
+        label='AdaBoost Train Error 01',
+        color='blue')
+
+max_y = max(ada_discrete_err_train_hinge[:, ].max() + 0.25, ada_discrete_err_train[:, ].max() + 0.25)
+ax.set_ylim((0.0, max_y))
+ax.set_xlabel('n_estimators')
+ax.set_ylabel('error rate')
+
+leg = ax.legend(loc='upper right', fancybox=True)
+leg.get_frame().set_alpha(0.7)
+
 plt.show()
