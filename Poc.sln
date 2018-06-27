@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poc_keyboard", "poc_keyboar
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poc_ann", "poc_ann\poc_ann.vcxproj", "{CBCF9594-3CC9-4CD7-B36B-2A70E4683761}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poc_data_processing", "poc_data_processing\poc_data_processing.vcxproj", "{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poc_mouse", "poc_mouse\poc_mouse.vcxproj", "{42B3E227-4850-4FB7-A199-A720C4541A33}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "poc_decision", "poc_decision\poc_decision.vcxproj", "{C1D07B46-AFAC-46B6-8F82-CC90F5F3EFCB}"
@@ -65,26 +63,6 @@ Global
 		{CBCF9594-3CC9-4CD7-B36B-2A70E4683761}.Release|x64.Build.0 = Release|x64
 		{CBCF9594-3CC9-4CD7-B36B-2A70E4683761}.Release|x86.ActiveCfg = Release|Win32
 		{CBCF9594-3CC9-4CD7-B36B-2A70E4683761}.Release|x86.Build.0 = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|ARM.ActiveCfg = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|Win32.ActiveCfg = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|Win32.Build.0 = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|Win32.Deploy.0 = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|x64.ActiveCfg = Release|x64
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|x64.Build.0 = Release|x64
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|x86.ActiveCfg = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|x86.Build.0 = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Debug|x86.Deploy.0 = Debug|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|Any CPU.ActiveCfg = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|ARM.ActiveCfg = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|Win32.ActiveCfg = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|Win32.Build.0 = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|Win32.Deploy.0 = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|x64.ActiveCfg = Release|x64
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|x64.Build.0 = Release|x64
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|x86.ActiveCfg = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|x86.Build.0 = Release|Win32
-		{AB5BE833-7BD0-4E8D-91CB-33B90EF42249}.Release|x86.Deploy.0 = Release|Win32
 		{42B3E227-4850-4FB7-A199-A720C4541A33}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{42B3E227-4850-4FB7-A199-A720C4541A33}.Debug|ARM.ActiveCfg = Debug|Win32
 		{42B3E227-4850-4FB7-A199-A720C4541A33}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -138,5 +116,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BD95CF82-4055-4D01-9FD4-764319C394C3}
 	EndGlobalSection
 EndGlobal
