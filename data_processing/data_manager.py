@@ -49,7 +49,7 @@ class DataManager():
 
     def process_key(self, dataset1: List, dataset2: List, training_percent: float = 0.80) -> Tuple[
         List[List], List[List]]:
-        def _inner_process(self: DataManager, dataset: List[List], user_id: str) -> List[List]:
+        def _inner_process(self: DataManager, dataset: List[List], user_id: int) -> List[List]:
             data = list()
             for i in range(len(dataset)):
                 if 3000 > (int(dataset[i][2]) - int(dataset[i][1])) > 16:
@@ -57,32 +57,43 @@ class DataManager():
                         self.mapper[dataset[i][0]] + [(float(dataset[i][2]) - float(dataset[i][1])) / 3000] + [user_id])
             return data
 
-        data1 = _inner_process(self, dataset1, "0")  # type: List[List]
-        data2 = _inner_process(self, dataset2, "1")  # type: List[List]
+        data1 = _inner_process(self, dataset1, 0)  # type: List[List]
+        data2 = _inner_process(self, dataset2, 1)  # type: List[List]
         final_length = int(min(len(data1), len(data2)) * training_percent)  # type: int
         train_dataset = data1[:final_length] + data2[:final_length]
         test_dataset = data1[final_length:] + data2[final_length:]
         return train_dataset, test_dataset
 
-    def process_interkey(self, dataset: List[List]) -> List[List]:
-        """Compute duration between two keys
-        <!> hard code
-        :param dataset: list like [[vkcode, timestamp1, timestamp2], [vkc, t1, t2]]
-        :param threshold: timeout between two keys in ms (default: 2000)
-        :return: list like [[vkcode0vkcode, duration],[vkcode0vkcode, duration]]
-        """
+    def process_inter(self, dataset1: List, dataset2, training_percent: float = 0.80) -> Tuple[List, List]:
+        def _inner_process_interkey(self: DataManager, dataset: List[List], user_id: int) -> List[List]:
+            def formating_interkey(vector1: List[int], vector2: List[int]):
+                data = [x1 | x2 for x1, x2 in (vector1, vector2)]
+                data[len(data) - 1] = 1
+                return data
 
-        def formating_interkey(vector1: List[int], vector2: List[int]):
-            data = [x1 | x2 for x1, x2 in (vector1, vector2)]
-            data[len(data) - 1] = 1
-            return data
+            new_data = list()
+            composite_key = [160, 161, 162, 163]
+            for i in range(1, len(dataset)):
+                duration = int(dataset[i][1]) - int(dataset[i - 1][2])
+                last_vkcode = int(dataset[i][0])
+                if 10 < duration < 8000 and last_vkcode not in composite_key:
+                    new_data.append(
+                        formating_interkey(self.mapper[dataset[i - 1][0]], self.mapper[dataset[i][0]]) + [duration,
+                                                                                                          user_id])
+            return new_data
 
-        new_data = list()
-        composite_key = [160, 161, 162, 163]
-        for i in range(1, len(dataset)):
-            duration = int(dataset[i][1]) - int(dataset[i - 1][2])
-            last_vkcode = int(dataset[i][0])
-            if 10 < duration < 8000 and last_vkcode not in composite_key:
-                new_data.append(
-                    formating_interkey(self.mapper[dataset[i - 1][0]], self.mapper[dataset[i][0]]) + [duration])
-        return new_data
+        data1 = _inner_process_interkey(self, dataset1, 0)  # type: List[List]
+        data2 = _inner_process_interkey(self, dataset2, 1)  # type: List[List]
+        final_length = int(min(len(data1), len(data2)) * training_percent)  # type: int
+        train_dataset = data1[:final_length] + data2[:final_length]
+        test_dataset = data1[final_length:] + data2[final_length:]
+        return train_dataset, test_dataset
+
+    def batch(self, dataset1: List, dataset2: List, output_filename):
+        self.mapper_scan(dataset1)
+        self.mapper_scan(dataset2)
+        self._generate_vector()
+        train_inter, test_inter = self.process_inter(dataset1, dataset2)
+        train, test = self.process_key(self.shuffle_data(dataset1), self.shuffle_data(dataset2))
+        self.export_csv(output_filename + "-train", train + train_inter)
+        self.export_csv(output_filename + "test", test + test_inter)

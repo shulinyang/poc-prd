@@ -12,6 +12,7 @@ from typing import List
 
 from common_functions import reading
 from dataSorting import DataSorting
+from data_manager import DataManager
 from mapper import Mapper
 from table_vkcode import x11_code_to_vkcode
 
@@ -70,6 +71,7 @@ def process(data: List[List], user_id: int, threshold: int = 3000) -> List[List]
 def categorical_effect(number: str) -> List[int]:
     return Mapper.vkcode[number]
 
+
 def process_interkey(data: List[List], threshold: int = 8000) -> List[List]:
     """Compute duration between two keys
     <!> hard code
@@ -102,6 +104,7 @@ def reformatting_inter_keys(local_data: List[List], user_id: int):
         local_data[i].append(user_id)
 
     return local_data
+
 
 def prepare_x11(basename) -> None:
     """Function to process data from X11 agent
@@ -151,5 +154,7 @@ def meta_prepare_mapper(list_basename: list, inter_key: bool):
 
 if __name__ == '__main__':
     prepare_x11("remi")
-    meta(["alexis", "nicolas", "remi"], [0, 1, 2])  # <!> hard coded
+    dm = DataManager()
+    dm.batch(reading("alexis.data"), reading("remi.data"), "alexis-remi")
+    # meta(["alexis", "nicolas", "remi"] [0, 1, 2])  # <!> hard coded
     sys.exit(0)
