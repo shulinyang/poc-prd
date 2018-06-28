@@ -67,6 +67,8 @@ def prepare_x11(basename) -> None:
 if __name__ == '__main__':
     # prepare_x11("remi")
     dm = DataManager()
+    dm.mapper_scan(reading("nicolas.data"))
     dm.batch(reading("alexis.data"), reading("remi.data"), "alexis-remi")
-    # meta(["alexis", "nicolas", "remi"] [0, 1, 2])  # <!> hard coded
+    dm.batch(reading("alexis.data"), reading("nicolas.data"), "alexis-nicolas")
+    dm.batch(reading("remi.data"), reading("nicolas.data"), "remi-nicolas")
     sys.exit(0)

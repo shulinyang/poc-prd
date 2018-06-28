@@ -7,7 +7,7 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.metrics import zero_one_loss, mean_squared_error
+from sklearn.metrics import zero_one_loss, accuracy_score
 from sklearn.tree import DecisionTreeClassifier
 
 
@@ -46,99 +46,119 @@ def split_last_column(local_data: List[List]) -> Tuple[np.ndarray, np.ndarray]:
     return np.asarray(X), np.asarray(y)
 
 
-data, float_pos = string2number(reading("alexis-nicolas.csv"))
-X, y = split_last_column(data)
+def plot_the_train(bdt: AdaBoostClassifier, X: np.ndarray, y: np.ndarray, float_pos: float):
+    plot_colors = "br"
+    plot_step = 0.005
+    class_names = "RN"
 
-bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=10), algorithm="SAMME", n_estimators=2000, learning_rate=0.8)
+    plt.figure(figsize=(10, 5))
 
-bdt.fit(X, y)
-plot_colors = "br"
-plot_step = 0.005
-class_names = "AR"
+    # Plot the decision boundaries
+    plt.subplot(121)
+    x_min, x_max = X[:, :].min() - 0.25, X[:, :].max() + 0.25
+    y_min, y_max = y[:].min() - 0.25, y[:].max() + 0.25
 
-plt.figure(figsize=(10, 5))
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+                         np.arange(y_min, y_max, plot_step))
 
-# Plot the decision boundaries
-plt.subplot(121)
-x_min, x_max = X[:, :].min() - 0.25, X[:, :].max() + 0.25
-y_min, y_max = y[:].min() - 0.25, y[:].max() + 0.25
+    my_vector = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
+    my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
 
-xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
-                     np.arange(y_min, y_max, plot_step))
+    Z = bdt.predict(my_vector)
+    Z = Z.reshape(xx.shape)
+    cs = plt.contourf(xx, yy, Z, cmap=plt.cm.Paired)
+    plt.axis("tight")
 
-my_vector = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-             0, 0, 0, 0, 0, 0, 0, 0]
-my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
-my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
+    # Plot the training points
+    for i, n, c in zip(range(2), class_names, plot_colors):
+        idx = np.where(y == i)
 
-Z = bdt.predict(my_vector)
-Z = Z.reshape(xx.shape)
-cs = plt.contourf(xx, yy, Z, cmap=plt.cm.Paired)
-plt.axis("tight")
+        plt.scatter(X[idx, float_pos], y[idx],
+                    c=c, cmap=plt.cm.Paired,
+                    s=20, edgecolor='k',
+                    label="Class %s" % n)
+    plt.xlim(x_min, x_max)
+    plt.ylim(y_min, y_max)
+    plt.legend(loc='upper right')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('Decision Boundary')
 
-# Plot the training points
-for i, n, c in zip(range(2), class_names, plot_colors):
-    idx = np.where(y == i)
+    # Plot the two-class decision scores
+    twoclass_output = bdt.decision_function(X)
+    plot_range = (twoclass_output.min(), twoclass_output.max())
+    plt.subplot(122)
+    for i, n, c in zip(range(2), class_names, plot_colors):
+        plt.hist(twoclass_output[y == i],
+                 bins=10,
+                 range=plot_range,
+                 facecolor=c,
+                 label='Class %s' % n,
+                 alpha=.5,
+                 edgecolor='k')
+    x1, x2, y1, y2 = plt.axis()
+    plt.axis((x1, x2, y1, y2 * 1.2))
+    plt.legend(loc='upper right')
+    plt.ylabel('Samples')
+    plt.xlabel('Score')
+    plt.title('Decision Scores')
 
-    plt.scatter(X[idx, float_pos], y[idx],
-                c=c, cmap=plt.cm.Paired,
-                s=20, edgecolor='k',
-                label="Class %s" % n)
-plt.xlim(x_min, x_max)
-plt.ylim(y_min, y_max)
-plt.legend(loc='upper right')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.title('Decision Boundary')
+    plt.tight_layout()
+    plt.subplots_adjust(wspace=0.35)
+    plt.show()
 
-# Plot the two-class decision scores
-twoclass_output = bdt.decision_function(X)
-plot_range = (twoclass_output.min(), twoclass_output.max())
-plt.subplot(122)
-for i, n, c in zip(range(2), class_names, plot_colors):
-    plt.hist(twoclass_output[y == i],
-             bins=10,
-             range=plot_range,
-             facecolor=c,
-             label='Class %s' % n,
-             alpha=.5,
-             edgecolor='k')
-x1, x2, y1, y2 = plt.axis()
-plt.axis((x1, x2, y1, y2 * 1.2))
-plt.legend(loc='upper right')
-plt.ylabel('Samples')
-plt.xlabel('Score')
-plt.title('Decision Scores')
 
-plt.tight_layout()
-plt.subplots_adjust(wspace=0.35)
-plt.show()
+def testing(bdt: AdaBoostClassifier, X_train, y_train, X_test: np.ndarray, y_test: np.ndarray, n_estimators):
+    ada_discrete_err_train = np.zeros((n_estimators,))
+    for i, y_pred in enumerate(bdt.staged_predict(X_train)):
+        ada_discrete_err_train[i] = zero_one_loss(y_train, y_pred)
 
-ada_discrete_err_train = np.zeros((2000,))
-for i, y_pred in enumerate(bdt.staged_predict(X)):
-    ada_discrete_err_train[i] = zero_one_loss(y, y_pred)
+    ada_discrete_err_test = np.zeros((n_estimators,))
+    for i, y_pred in enumerate(bdt.staged_predict(X_test)):
+        ada_discrete_err_test[i] = zero_one_loss(y_test, y_pred)
 
-ada_discrete_err_train_hinge = np.zeros((2000,))
-for i, y_pred in enumerate(bdt.staged_predict(X)):
-    ada_discrete_err_train_hinge[i] = mean_squared_error(y, y_pred)
-fig = plt.figure(2)
-ax = fig.add_subplot(111)
+    fig = plt.figure(2)
+    ax = fig.add_subplot(111)
 
-ax.plot(np.arange(2000) + 1, ada_discrete_err_train_hinge,
-        label='AdaBoost Train Error MSE',
-        color='red')
+    ax.plot(np.arange(n_estimators) + 1, ada_discrete_err_train,
+            label='AdaBoost Train 01 Loss',
+            color='blue')
 
-ax.plot(np.arange(2000) + 1, ada_discrete_err_train,
-        label='AdaBoost Train Error 01',
-        color='blue')
+    ax.plot(np.arange(n_estimators) + 1, ada_discrete_err_test,
+            label='AdaBoost Test 01 Loss',
+            color='green')
 
-max_y = max(ada_discrete_err_train_hinge[:, ].max() + 0.25, ada_discrete_err_train[:, ].max() + 0.25)
-ax.set_ylim((0.0, max_y))
-ax.set_xlabel('n_estimators')
-ax.set_ylabel('error rate')
+    max_y = max(ada_discrete_err_train[:, ].max() + 0.25, ada_discrete_err_test[:, ].max() + 0.25)
+    ax.set_ylim((0.0, max_y))
+    ax.set_xlabel('n_estimators')
+    ax.set_ylabel('error rate')
 
-leg = ax.legend(loc='upper right', fancybox=True)
-leg.get_frame().set_alpha(0.7)
+    leg = ax.legend(loc='upper right', fancybox=True)
+    leg.get_frame().set_alpha(0.7)
 
-plt.show()
+    plt.show()
+
+
+if __name__ == "__main__":
+    n_estimators = 1000
+    data, float_pos = string2number(reading("remi-nicolas-train.csv"))
+    X, y = split_last_column(data)
+
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=5), algorithm="SAMME", n_estimators=n_estimators)
+    bdt.fit(X, y)
+
+    y_pred = bdt.predict(X)
+    print(accuracy_score(y, y_pred))
+
+    plot_the_train(bdt, X, y, float_pos)
+
+    data, _ = string2number(reading("remi-nicolas-test.csv"))
+    X_test, y_test = split_last_column(data)
+
+    testing(bdt, X, y, X_test, y_test, n_estimators)
+
+    y_pred = bdt.predict(X_test)
+    print(accuracy_score(y_test, y_pred))
