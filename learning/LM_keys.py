@@ -142,23 +142,31 @@ def testing(bdt: AdaBoostClassifier, X_train, y_train, X_test: np.ndarray, y_tes
     plt.show()
 
 
+def save_result(dataset_name: str, n_estimators: int, dtd: int, train_accuracy: float, test_accuracy: float):
+    with open("result.txt", "a", encoding="utf-8") as file:
+        file.write("%s; %s; %s; %s; %s" % (dataset_name, n_estimators, dtd, train_accuracy, test_accuracy))
+
+
 if __name__ == "__main__":
     n_estimators = 1000
-    data, float_pos = string2number(reading("remi-nicolas-train.csv"))
+    dtd = 5
+    dataset_name = "remi-nicolas"
+    data, float_pos = string2number(reading(dataset_name + "-train.csv"))
     X, y = split_last_column(data)
 
-    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=5), algorithm="SAMME", n_estimators=n_estimators)
+    bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=dtd), algorithm="SAMME", n_estimators=n_estimators)
     bdt.fit(X, y)
 
     y_pred = bdt.predict(X)
-    print(accuracy_score(y, y_pred))
+    train_accuracy = accuracy_score(y, y_pred)
 
     plot_the_train(bdt, X, y, float_pos)
 
-    data, _ = string2number(reading("remi-nicolas-test.csv"))
+    data, _ = string2number(reading(dataset_name + "-test.csv"))
     X_test, y_test = split_last_column(data)
 
     testing(bdt, X, y, X_test, y_test, n_estimators)
 
     y_pred = bdt.predict(X_test)
-    print(accuracy_score(y_test, y_pred))
+    test_accuracy = accuracy_score(y_test, y_pred)
+    save_result(dataset_name, n_estimators, dtd, train_accuracy, test_accuracy)
