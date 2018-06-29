@@ -20,21 +20,12 @@
 
 ### Traitement
 
-**poc_preprocessing**
+**data_processing**
 * langage: Python 3.3+
 
-**poc_data_processing** (obselète)
-* langage: C++11
-* Projet Visual Studio inclus
-
 ### Apprentissage
-**poc_ann**:
-* langage: C++11
-* bibliothèque: FANN
-* Projet Visual Studio inclus
+**learning**:
+* langage: Python 3.3+
+* bibliothèque: scikit-learn 0.19, numpy
 
 ### Decision
-**poc_decision**:
-* langage: C++11
-* bibliothèque: FANN
-* Projet Visual Studio inclus
