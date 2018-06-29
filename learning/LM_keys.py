@@ -61,9 +61,9 @@ def plot_the_train(bdt: AdaBoostClassifier, X: np.ndarray, y: np.ndarray, float_
     xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                          np.arange(y_min, y_max, plot_step))
 
-    my_vector = [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    my_vector = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
     my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
 
