@@ -48,49 +48,46 @@ def split_last_column(local_data: List[List]) -> Tuple[np.ndarray, np.ndarray]:
 
 def plot_the_train(bdt: AdaBoostClassifier, X: np.ndarray, y: np.ndarray, float_pos: float):
     plot_colors = "br"
-    plot_step = 0.005
-    class_names = "RN"
-
+    class_names = "AN"
     plt.figure(figsize=(10, 5))
 
     # Plot the decision boundaries
-    plt.subplot(121)
-    x_min, x_max = X[:, :].min() - 0.25, X[:, :].max() + 0.25
-    y_min, y_max = y[:].min() - 0.25, y[:].max() + 0.25
+    # plot_step = 0.005
+    # plt.subplot(121)
+    # x_min, x_max = X[:, :].min() - 0.25, X[:, :].max() + 0.25
+    # y_min, y_max = y[:].min() - 0.25, y[:].max() + 0.25
 
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
-                         np.arange(y_min, y_max, plot_step))
+    # xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
+    #                     np.arange(y_min, y_max, plot_step))
 
-    my_vector = [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
-    my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
+    # my_vector = [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    # my_vector = [my_vector for i in range(np.c_[xx.ravel()].shape[0])]
+    # my_vector = np.concatenate((my_vector, np.c_[xx.ravel()]), axis=1)
 
-    Z = bdt.predict(my_vector)
-    Z = Z.reshape(xx.shape)
-    cs = plt.contourf(xx, yy, Z, cmap=plt.cm.Paired)
-    plt.axis("tight")
+    # Z = bdt.predict(my_vector)
+    # Z = Z.reshape(xx.shape)
+    # cs = plt.contourf(xx, yy, Z, cmap=plt.cm.Paired)
+    # plt.axis("tight")
 
     # Plot the training points
-    for i, n, c in zip(range(2), class_names, plot_colors):
-        idx = np.where(y == i)
+    # for i, n, c in zip(range(2), class_names, plot_colors):
+    #    idx = np.where(y == i)
 
-        plt.scatter(X[idx, float_pos], y[idx],
-                    c=c, cmap=plt.cm.Paired,
-                    s=20, edgecolor='k',
-                    label="Class %s" % n)
-    plt.xlim(x_min, x_max)
-    plt.ylim(y_min, y_max)
-    plt.legend(loc='upper right')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Decision Boundary')
+    #    plt.scatter(X[idx, float_pos], y[idx],
+    #                c=c, cmap=plt.cm.Paired,
+    #                s=20, edgecolor='k',
+    #                label="Class %s" % n)
+    # plt.xlim(x_min, x_max)
+    # plt.ylim(y_min, y_max)
+    # plt.legend(loc='upper right')
+    # plt.xlabel('x')
+    # plt.ylabel('y')
+    # plt.title('Decision Boundary')
 
     # Plot the two-class decision scores
     twoclass_output = bdt.decision_function(X)
     plot_range = (twoclass_output.min(), twoclass_output.max())
-    plt.subplot(122)
+    # plt.subplot(122)
     for i, n, c in zip(range(2), class_names, plot_colors):
         plt.hist(twoclass_output[y == i],
                  bins=10,
@@ -142,15 +139,17 @@ def testing(bdt: AdaBoostClassifier, X_train, y_train, X_test: np.ndarray, y_tes
     plt.show()
 
 
-def save_result(dataset_name: str, n_estimators: int, dtd: int, train_accuracy: float, test_accuracy: float):
-    with open("result.txt", "a", encoding="utf-8") as file:
-        file.write("%s; %s; %s; %s; %s" % (dataset_name, n_estimators, dtd, train_accuracy, test_accuracy))
+def save_result(filename: str, dataset_name: str, n_estimators: int, dtd: int, train_accuracy: float,
+                test_accuracy: float, learning_rate: float = 1):
+    with open(filename, "a", encoding="utf-8") as file:
+        file.write("%s; %s; %s; %s; %s; %s\n" % (
+            dataset_name, n_estimators, dtd, learning_rate, train_accuracy, test_accuracy))
 
 
 if __name__ == "__main__":
     n_estimators = 1000
     dtd = 5
-    dataset_name = "remi-nicolas"
+    dataset_name = "alexis-nicolas"
     data, float_pos = string2number(reading(dataset_name + "-train.csv"))
     X, y = split_last_column(data)
 
@@ -169,4 +168,4 @@ if __name__ == "__main__":
 
     y_pred = bdt.predict(X_test)
     test_accuracy = accuracy_score(y_test, y_pred)
-    save_result(dataset_name, n_estimators, dtd, train_accuracy, test_accuracy)
+    save_result("result.txt", dataset_name, n_estimators, dtd, train_accuracy, test_accuracy)

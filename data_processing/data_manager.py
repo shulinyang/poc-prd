@@ -50,7 +50,7 @@ class DataManager():
             #    csv_writer.writerow([key] + self.sorted_data[key])
             for key in dataset:
                 csv_writer.writerow(key)
-        print(filename + " as been exported.")
+        print(filename + " has been exported.")
 
     def process_key(self, training_percent: float = 0.80) -> Tuple[List[List], List[List]]:
         data1 = self.__inner_process(self.dataset1, 0)  # type: List[List]
@@ -61,9 +61,9 @@ class DataManager():
     def __inner_process(self, dataset: List[List], user_id: int) -> List[List]:
         data = list()
         for i in range(len(dataset)):
-            if 3000 > (int(dataset[i][2]) - int(dataset[i][1])) > 16:
+            if 8000 > (int(dataset[i][2]) - int(dataset[i][1])) > 16:
                 data.append(
-                    self.mapper[int(dataset[i][0])] + [(float(dataset[i][2]) - float(dataset[i][1])) / 3000] + [
+                    self.mapper[int(dataset[i][0])] + [(float(dataset[i][2]) - float(dataset[i][1])) / 8000] + [
                         user_id])
         return data
 
@@ -86,10 +86,10 @@ class DataManager():
         for i in range(1, len(dataset)):
             duration = int(dataset[i][1]) - int(dataset[i - 1][2])
             last_vkcode = int(dataset[i][0])
-            if 10 < duration < 8000 and last_vkcode not in composite_key:
+            if 10 < duration < 2000 and last_vkcode not in composite_key:
                 new_data.append(
                     formating_interkey(self.mapper[int(dataset[i - 1][0])], self.mapper[int(dataset[i][0])]) + [
-                        duration / 8000,
+                        duration / 2000,
                         user_id])
         return new_data
 
